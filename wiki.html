@@ -1,0 +1,409 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>База знаний сварщика — WELDPRO | Глоссарий, дефекты, материалы</title>
+  <meta name="description" content="Глоссарий сварочных терминов, интерактивная карта дефектов шва, справочник материалов, статьи и руководства для сварщиков." />
+  <meta name="keywords" content="сварочный глоссарий, дефекты сварки, непровар, поры, трещины, справочник материалов, сварка статьи" />
+  <link rel="manifest" href="manifest.json" />
+  <link rel="stylesheet" href="css/styles.css" />
+</head>
+<body>
+  <div class="loader" id="loader"><div class="loader-logo">WELDPRO</div><div class="loader-bar"><div class="loader-bar-fill"></div></div></div>
+  <div class="bg-anim"></div>
+  <div class="sparks" id="sparks"></div>
+
+  <nav class="navbar" id="navbar">
+    <a href="index.html" class="nav-logo">
+      <div class="nav-logo-icon"><svg viewBox="0 0 24 24" width="28" height="28"><path d="M13 2 L4 14 L11 14 L9 22 L20 9 L13 9 Z" fill="url(#g-primary)"/></svg></div>
+      WELD<span>PRO</span>
+    </a>
+    <ul class="nav-links" id="navLinks">
+      <li><a href="index.html">Главная</a></li>
+      <li><a href="catalog.html">Каталог</a></li>
+      <li><a href="calculators.html">Калькуляторы</a></li>
+      <li><a href="wiki.html" class="active">База знаний</a></li>
+      <li><a href="account.html">Личный кабинет</a></li>
+    </ul>
+    <div class="nav-right">
+      <button class="theme-btn" onclick="toggleTheme()"><svg viewBox="0 0 24 24" width="20" height="20"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z" fill="currentColor"/></svg></button>
+      <div class="burger" id="burger" onclick="toggleBurger()"><span></span><span></span><span></span></div>
+    </div>
+  </nav>
+
+  <section class="section" style="padding-top:120px;">
+    <div class="container">
+      <div class="section-header reveal">
+        <div class="section-tag"><svg viewBox="0 0 24 24" width="14" height="14"><path d="M4 19V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v14a2 2 0 0 0-2 2H6a2 2 0 0 0-2 2z M20 5v14" stroke="url(#g-primary)" stroke-width="2" fill="none"/></svg></div>
+        <h1 class="section-title">База знаний</h1>
+        <p class="section-desc">Глоссарий терминов, интерактивная карта дефектов, справочник материалов и полезные статьи для сварщиков.</p>
+      </div>
+
+      <!-- Glossary -->
+      <div style="margin-bottom:60px;">
+        <h2 style="font-size:1.8rem;font-weight:700;text-align:center;margin-bottom:30px;">Глоссарий</h2>
+        <input type="text" class="glossary-search" id="glossarySearch" placeholder="Поиск термина..." oninput="renderGlossary()" />
+        <div class="glossary-cats" id="glossaryCats"></div>
+        <div class="glossary-list" id="glossaryList"></div>
+      </div>
+
+      <!-- 3D Defect Map -->
+      <div style="margin-bottom:60px;">
+        <h2 style="font-size:1.8rem;font-weight:700;text-align:center;margin-bottom:30px;">Интерактивная карта дефектов</h2>
+        <p style="text-align:center;color:var(--text-muted);margin-bottom:25px;">Нажмите на точки на шве, чтобы узнать о дефекте, причинах и способах устранения.</p>
+        <div class="defect-3d-container reveal">
+          <div class="defect-3d-canvas" id="defect3dCanvas">
+            <svg viewBox="0 0 800 400" width="100%" height="100%" style="position:absolute;">
+              <!-- Metal plates -->
+              <rect x="50" y="180" width="340" height="40" rx="4" fill="#2a2a2a" stroke="#444" stroke-width="2"/>
+              <rect x="410" y="180" width="340" height="40" rx="4" fill="#2a2a2a" stroke="#444" stroke-width="2"/>
+              <rect x="50" y="180" width="340" height="8" rx="3" fill="#3a3a3a"/>
+              <rect x="410" y="180" width="340" height="8" rx="3" fill="#3a3a3a"/>
+              <!-- Weld bead -->
+              <ellipse cx="400" cy="185" rx="60" ry="15" fill="url(#g-primary)" opacity="0.9"/>
+              <ellipse cx="400" cy="182" rx="50" ry="8" fill="#FF8A50" opacity="0.6"/>
+              <!-- Glow -->
+              <ellipse cx="400" cy="185" rx="100" ry="40" fill="url(#g-amber)" opacity="0.1"/>
+            </svg>
+            <!-- Hotspots -->
+            <div class="defect-3d-hotspot" data-label="Непровар" style="left:42%;top:50%;" onclick="showDefect3d('Непровар')"></div>
+            <div class="defect-3d-hotspot" data-label="Поры" style="left:48%;top:42%;" onclick="showDefect3d('Поры')"></div>
+            <div class="defect-3d-hotspot" data-label="Подрез" style="left:35%;top:45%;" onclick="showDefect3d('Подрез')"></div>
+            <div class="defect-3d-hotspot" data-label="Трещины" style="left:55%;top:48%;" onclick="showDefect3d('Трещины')"></div>
+            <div class="defect-3d-hotspot" data-label="Шлак" style="left:45%;top:55%;" onclick="showDefect3d('Шлак')"></div>
+            <div class="defect-3d-hotspot" data-label="Наплыв" style="left:52%;top:40%;" onclick="showDefect3d('Наплыв')"></div>
+            <div class="defect-3d-hotspot" data-label="Кратер" style="left:58%;top:52%;" onclick="showDefect3d('Кратер')"></div>
+            <div class="defect-3d-hotspot" data-label="Окалина" style="left:38%;top:52%;" onclick="showDefect3d('Окалина')"></div>
+          </div>
+          <div class="defect-3d-info" id="defect3dInfo">
+            <h4>Выберите дефект на шве</h4>
+            <p>Нажмите на одну из точек на интерактивной модели сварного шва, чтобы увидеть описание дефекта, причины возникновения и способы устранения.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Defects Grid -->
+      <div style="margin-bottom:60px;">
+        <h2 style="font-size:1.8rem;font-weight:700;text-align:center;margin-bottom:30px;">Карточки дефектов</h2>
+        <div class="grid defects-grid" id="defectsGrid"></div>
+      </div>
+
+      <!-- Reference Materials -->
+      <div style="margin-bottom:60px;">
+        <h2 style="font-size:1.8rem;font-weight:700;text-align:center;margin-bottom:30px;">Справочник материалов</h2>
+        <div class="grid ref-grid" id="refGrid"></div>
+      </div>
+
+      <!-- SEO Articles -->
+      <div>
+        <h2 style="font-size:1.8rem;font-weight:700;text-align:center;margin-bottom:30px;">Полезные статьи</h2>
+        <div class="grid" style="grid-template-columns:repeat(auto-fit,minmax(300px,1fr));">
+          <div class="card article-card reveal clickable" onclick="location.href='article-pochemu-rvet-dugu.html'">
+            <span class="article-tag">Решение проблем</span>
+            <h3>Почему рвёт дугу при сварке и как это исправить</h3>
+            <p>Разбираем основные причины обрыва дуги при MMA, MIG/MAG и TIG сварке. Практические советы по настройке оборудования и технике.</p>
+            <div class="article-meta"><span>15 мин чтения</span><span>24.08.2026</span></div>
+          </div>
+          <div class="card article-card reveal clickable" onclick="location.href='article-kak-varit-alyuminiy-tig.html'">
+            <span class="article-tag">Техника</span>
+            <h3>Как варить алюминий TIG: полное руководство</h3>
+            <p>Выбор аппарата AC/DC, подготовка поверхности, настройка тока и аргона, частые ошибки начинающих. Пошаговая инструкция.</p>
+            <div class="article-meta"><span>20 мин чтения</span><span>20.08.2026</span></div>
+          </div>
+          <div class="card article-card reveal clickable" onclick="location.href='article-vybor-svarochnogo-apparata.html'">
+            <span class="article-tag">Оборудование</span>
+            <h3>Как выбрать сварочный аппарат для дома и работы</h3>
+            <p>Сравнение MMA, MIG/MAG и TIG. На что обращать внимание при покупке: ток, ПВ, бренды, цена-качество.</p>
+            <div class="article-meta"><span>12 мин чтения</span><span>15.08.2026</span></div>
+          </div>
+          <div class="card article-card reveal clickable" onclick="location.href='article-gost-naks.html'">
+            <span class="article-tag">Стандарты</span>
+            <h3>Сварка по ГОСТ и НАКС: требования и нормы</h3>
+            <p>Основные стандарты качества сварных соединений. Требования НАКС к оборудованию, материалам и квалификации сварщиков.</p>
+            <div class="article-meta"><span>18 мин чтения</span><span>10.08.2026</span></div>
+          </div>
+          <div class="card article-card reveal clickable" onclick="location.href='article-svarochnye-gazy.html'">
+            <span class="article-tag">Материалы</span>
+            <h3>Сварочные газы: аргон, CO2, смеси — когда что использовать</h3>
+            <p>Подробный разбор защитных газов для MIG/MAG и TIG. Расход, давление, типы смесей для разных металлов.</p>
+            <div class="article-meta"><span>10 мин чтения</span><span>05.08.2026</span></div>
+          </div>
+          <div class="card article-card reveal clickable" onclick="location.href='article-elektrody-mma.html'">
+            <span class="article-tag">Материалы</span>
+            <h3>Виды электродов для MMA: рутиловые, основные, целлюлозные</h3>
+            <p>Как выбрать электрод под металл и задачу. Маркировка, хранение, просушка. Популярные марки: МР-3, УОНИ, ЦЛ.</p>
+            <div class="article-meta"><span>14 мин чтения</span><span>01.08.2026</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <footer class="footer">
+    <div class="footer-content">
+      <a href="index.html" class="footer-logo"><svg viewBox="0 0 24 24" width="28" height="28"><path d="M13 2 L4 14 L11 14 L9 22 L20 9 L13 9 Z" fill="url(#g-primary)"/></svg>WELD<span>PRO</span></a>
+      <div class="footer-links">
+        <a href="catalog.html">Каталог</a><a href="calculators.html">Калькуляторы</a><a href="wiki.html">База знаний</a><a href="account.html">Личный кабинет</a>
+      </div>
+    </div>
+    <div class="footer-bottom">&copy; 2026 WELDPRO. Все права защищены.</div>
+  </footer>
+
+  <div class="modal-overlay" id="modalOverlay" onclick="if(event.target===this)closeModal()">
+    <div class="modal"><button class="modal-close" onclick="closeModal()">&#10005;</button><div id="modalBody"></div></div>
+  </div>
+  <button class="scroll-top" id="scrollTop" onclick="scrollToTop()"><svg viewBox="0 0 24 24"><path d="M12 19V5 M5 12l7-7 7 7" stroke="white" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+
+  <script src="js/app.js"></script>
+  <script>
+    // === Glossary ===
+    const glossaryCats = ['Все', 'Оборудование', 'Материалы', 'Дефекты', 'Техника'];
+    const glossary = [
+      { t:'Дуга сварная', c:'Техника', d:'Электрический разряд для плавления металла.', full:'Определение:\nДуга — это устойчивый электрический разряд, который горит между электродом и металлом и плавит оба.\n\nПрименение:\n- Основа всех методов сварки\n- Создаёт температуру до 5000°C\n- Расплавляет кромки деталей\n\nСоветы:\n- Удерживайте стабильную длину дуги\n- Не рвите дугу резко, заваривайте кратер\n- Следите за напряжением и током' },
+      { t:'Электрод', c:'Материалы', d:'Стержень с покрытием, плавится при сварке.', full:'Определение:\nЭлектрод — это металлический стержень с покрытием, который плавится при сварке и служит присадочным материалом для MMA.\n\nПрименение:\n- Рутиловые (МР-3, АНО) — универсальные\n- Основные (УОНИ) — ответственные швы\n- Целлюлозные — трубы\n\nСоветы:\n- Просушите электроды при 100-120°C\n- Выбирайте диаметр по толщине металла\n- Храните в сухом месте' },
+      { t:'Шлак', c:'Материалы', d:'Остаток покрытия электрода.', full:'Определение:\nШлак — это расплавленное покрытие электрода или флюса, которое затвердевает на поверхности шва и защищает его.\n\nПрименение:\n- Защищает шов от воздуха при остывании\n- Образует корку, которую нужно сбивать\n- Влияет на внешний вид шва\n\nСоветы:\n- Сбивайте шлак молотком после остывания\n- Очищайте каждый слой перед следующим\n- Плохая очистка ведёт к дефектам' },
+      { t:'Непровар', c:'Дефекты', d:'Отсутствие сплавления между деталями.', full:'Определение:\nНепровар — дефект, при котором металл не сплавился на всю глубину, образуется слабое соединение.\n\nПричины:\n- Недостаточный ток\n- Высокая скорость сварки\n- Узкая разделка кромок\n\nСоветы:\n- Увеличьте ток на 10-15%\n- Снизьте скорость\n- Сделайте правильную разделку кромок' },
+      { t:'Подрез', c:'Дефекты', d:'Углубление по краю шва.', full:'Определение:\nПодрез — канавка, которая образуется по краю шва и ослабляет соединение.\n\nПричины:\n- Слишком большой ток\n- Длинная дуга\n- Неправильный угол наклона электрода\n\nСоветы:\n- Снизьте ток\n- Укоротите дугу\n- Следите за углом наклона электрода' },
+      { t:'Поры', c:'Дефекты', d:'Газовые полости в шве.', full:'Определение:\nПоры — пузырьки газа, застрявшие в металле шва, которые ослабляют соединение.\n\nПричины:\n- Влага на металле или электроде\n- Ржавчина и грязь\n- Недостаточный расход газа\n\nСоветы:\n- Очистите кромки от ржавчины\n- Просушите электроды\n- Увеличьте расход газа' },
+      { t:'Трещина', c:'Дефекты', d:'Разрыв металла шва или ЗТВ.', full:'Определение:\nТрещина — самый опасный дефект, разрыв металла в шве или около него.\n\nПричины:\n- Быстрое остывание\n- Внутренние напряжения\n- Водород в металле\n\nСоветы:\n- Подогревайте толстый металл\n- Давайте медленно остывать\n- Используйте низководородные электроды' },
+      { t:'Горелка', c:'Оборудование', d:'Инструмент для подачи дуги и присадки.', full:'Определение:\nГорелка — инструмент, который подаёт дугу, присадку и газ в зону сварки для MIG и TIG.\n\nПрименение:\n- TIG-горелка с вольфрамовым электродом\n- MIG-горелка с подачей проволоки\n- Разные размеры под ток\n\nСоветы:\n- Держите горелку под правильным углом\n- Следите за состоянием сопла\n- Чистите контактный наконечник' },
+      { t:'Проволока', c:'Материалы', d:'Присадочный материал для MIG/MAG.', full:'Определение:\nПроволока — присадочный материал, который автоматически подаётся в зону сварки при MIG/MAG.\n\nПрименение:\n- СВ-08Г2С — для стали\n- AlMg5 — для алюминия\n- ЭР-308L — для нержавейки\n\nСоветы:\n- Подбирайте диаметр под толщину\n- Храните проволоку в сухости\n- Проверяйте подачу перед работой' },
+      { t:'Аргон', c:'Материалы', d:'Инертный газ для TIG сварки.', full:'Определение:\nАргон — инертный газ, который защищает расплавленный металл от кислорода при сварке.\n\nПрименение:\n- TIG — чистый аргон 100%\n- MIG алюминия — аргон 100%\n- MIG стали — смесь Ar/CO2\n\nСоветы:\n- Подбирайте расход по соплу\n- Защищайте шов с обратной стороны\n- Для алюминия используйте AC ток' },
+      { t:'Импульс', c:'Техника', d:'Режим пульсирующего тока.', full:'Определение:\nИмпульс — режим сварки, при котором ток пульсирует между высоким и низким значением.\n\nПрименение:\n- Сварка тонкого металла\n- Снижение нагрева детали\n- Лучший контроль ванны\n\nСоветы:\n- Настройте частоту импульсов\n- Для алюминия используйте импульс\n- Идеален для TIG' },
+      { t:'Antistick', c:'Оборудование', d:'Функция антизалипания электрода.', full:'Определение:\nAntistick (антизалипание) — функция, которая автоматически снижает ток при коротком замыкании, чтобы электрод не прилипал.\n\nПрименение:\n- Есть у большинства инверторов\n- Помогает новичкам\n- Защищает аппарат\n\nСоветы:\n- Проверьте наличие функции при покупке\n- Всё равно держите электрод правильно\n- Не злоупотребляйте залипанием' },
+      { t:'Hot Start', c:'Оборудование', d:'Функция горячего старта.', full:'Определение:\nHot Start — функция, которая даёт повышенный ток в момент поджига дуги для лёгкого старта.\n\nПрименение:\n- Облегчает поджиг электрода\n- Улучшает начало шва\n- Стандарт для инверторов\n\nСоветы:\n- Настраивается в диапазоне 10-50%\n- Для тонкого металла уменьшайте\n- Удобно для MMA' },
+      { t:'Arc Force', c:'Оборудование', d:'Усиление дуги при коротком замыкании.', full:'Определение:\nArc Force (усиление дуги) — функция, которая повышает ток при приближении капли, чтобы дуга не гасла.\n\nПрименение:\n- Стабильная дуга при сварке\n- Лучше провар\n- Меньше прилипаний\n\nСоветы:\n- Настройте по ощущениям\n- Для вертикальных швов уменьшайте\n- Экспериментируйте с настройкой' },
+      { t:'ПВ', c:'Оборудование', d:'Продолжительность включения.', full:'Определение:\nПВ (продолжительность включения) — процент времени, в течение которого аппарат может работать без перегрева.\n\nПрименение:\n- ПВ 60% при 200А = 6 мин из 10\n- Чем выше ПВ, тем лучше\n- Важно для интенсивной работы\n\nСоветы:\n- Для дома достаточно ПВ 60%\n- Для производства берите ПВ 80-100%\n- Учитывайте при выборе' },
+      { t:'ЗТВ', c:'Техника', d:'Зона термического влияния.', full:'Определение:\nЗТВ — зона термического влияния, участок металла около шва, который нагрелся и изменил структуру.\n\nПрименение:\n- Важно для прочности\n- Влияет на свойства стали\n- Учитывается в проектах\n\nСоветы:\n- Контролируйте нагрев\n- Для ответственных швов делайте термообработку\n- Избегайте перегрева' },
+      { t:'Прихватка', c:'Техника', d:'Временный шов для фиксации деталей.', full:'Определение:\nПрихватка — короткий временный шов, который фиксирует детали перед основной сваркой.\n\nПрименение:\n- Фиксация положения деталей\n- Предотвращение смещения\n- Облегчает сборку\n\nСоветы:\n- Делайте прихватки через 200-300 мм\n- Длина прихватки 20-40 мм\n- Учитывайте усадку металла' },
+      { t:'Вольфрам', c:'Материалы', d:'Электрод для TIG сварки.', full:'Определение:\nВольфрам — тугоплавкий металл, из которого делают электроды для TIG сварки.\n\nПрименение:\n- Чистый вольфрам — для AC\n- Легированный торием — для DC\n- Разные диаметры под ток\n\nСоветы:\n- Затачивайте под углом 30-60°\n- Не перегревайте электрод\n- Для алюминия используйте AC' },
+      { t:'Титан', c:'Материалы', d:'Лёгкий прочный металл.', full:'Определение:\nТитан — лёгкий и прочный металл, который требует особых условий сварки.\n\nПрименение:\n- Авиация и космос\n- Химическая промышленность\n- Медицина\n\nСоветы:\n- Только TIG в чистом аргоне\n- Защита с обеих сторон\n- Не допускайте загрязнений' },
+      { t:'Разделка', c:'Техника', d:'Подготовка кромок под сварку.', full:'Определение:\nРазделка — подготовка кромок металла под сварку для обеспечения провара.\n\nПрименение:\n- V-образная — для 8-20 мм\n- X-образная — для 12-40 мм\n- U-образная — для толстого\n\nСоветы:\n- Угол разделки обычно 60°\n- Оставляйте притупление 1-2 мм\n- Зазор 1-3 мм' },
+      { t:'Кромка', c:'Техника', d:'Край металла под сварку.', full:'Определение:\nКромка — край металла, который подготавливают к сварке.\n\nПрименение:\n- Зачистка кромок\n- Снятие фасок\n- Удаление дефектов\n\nСоветы:\n- Зачищайте 20-30 мм от кромки\n- Удаляйте ржавчину и краску\n- Проверяйте геометрию' },
+      { t:'Шов', c:'Техника', d:'Соединение деталей сваркой.', full:'Определение:\nШов — результат сварки, соединение деталей расплавленным металлом.\n\nПрименение:\n- Стыковые — для листов\n- Угловые — для рам\n- Тавровые — для рёбер\n\nСоветы:\n- Контролируйте ширину и высоту\n- Проверяйте на дефекты\n- Обрабатывайте после сварки' },
+      { t:'Флюс', c:'Материалы', d:'Материал для защиты шва.', full:'Определение:\nФлюс — материал, который защищает шов от воздуха и легирует металл.\n\nПрименение:\n- Автоматическая сварка\n- Порошковая проволока\n- Медная пайка\n\nСоветы:\n- Подбирайте флюс под металл\n- Контролируйте влажность\n- Утилизируйте отработанный флюс' },
+      { t:'Инвертор', c:'Оборудование', d:'Источник питания дуги.', full:'Определение:\nИнвертор — современный источник питания, который преобразует ток для сварки.\n\nПрименение:\n- MMA инверторы\n- MIG/MAG полуавтоматы\n- TIG аппараты\n\nСоветы:\n- Проверяйте ПВ\n- Следите за охлаждением\n- Выбирайте по току' },
+      { t:'Крага', c:'Оборудование', d:'Перчатка сварщика.', full:'Определение:\nКрага — защитная перчатка сварщика из толстой кожи.\n\nПрименение:\n- Защита рук от искр\n- Защита от ожогов\n- Удержание горячих деталей\n\nСоветы:\n- Выбирайте по размеру\n- Для TIG — тонкие краги\n- Для MMA — усиленные' },
+      { t:'Наплавка', c:'Техника', d:'Нанесение слоя металла на поверхность.', full:'Определение:\nНаплавка — нанесение слоя металла на поверхность детали для восстановления или упрочнения.\n\nПрименение:\n- Восстановление изношенных деталей\n- Упрочнение поверхностей\n- Ремонт валов и роликов\n\nСоветы:\n- Используйте специальные электроды\n- Контролируйте температуру\n- Снимайте наплавку после' },
+      { t:'Подогрев', c:'Техника', d:'Предварительный нагрев металла перед сваркой.', full:'Определение:\nПодогрев — предварительный нагрев металла перед сваркой для снижения трещин.\n\nПрименение:\n- Толстый металл >20 мм\n- Низколегированные стали\n- Ответственные конструкции\n\nСоветы:\n- Температура 100-200°C\n- Используйте газовые горелки\n- Контролируйте термокарандашом' },
+      { t:'Сварка AC/DC', c:'Техника', d:'Переменный или постоянный ток.', full:'Определение:\nAC/DC — режимы сварки переменным (AC) или постоянным (DC) током.\n\nПрименение:\n- AC — для алюминия\n- DC — для стали и нержавейки\n- DC — для большинства задач\n\nСоветы:\n- Для алюминия нужен AC\n- Для нержавейки — DC\n- Универсальные аппараты AC/DC' },
+      { t:'Расход газа', c:'Техника', d:'Количество газа за единицу времени.', full:'Определение:\nРасход газа — количество защитного газа, подаваемое в зону сварки за минуту.\n\nПрименение:\n- MIG стали: 8-12 л/мин\n- TIG: 6-10 л/мин\n- MIG алюминия: 15-20 л/мин\n\nСоветы:\n- Слишком мало — поры\n- Слишком много — расход\n- Подбирайте по соплу' },
+      { t:'Стыковой шов', c:'Техника', d:'Соединение двух листов встык.', full:'Определение:\nСтыковой шов — соединение, при котором две детали лежат в одной плоскости.\n\nПрименение:\n- Соединение листов\n- Трубы\n- Секции металлоконструкций\n\nСоветы:\n- Выравнивайте кромки\n- Используйте разделку для толстого\n- Контролируйте зазор' },
+      { t:'Угловой шов', c:'Техника', d:'Соединение деталей под углом.', full:'Определение:\nУгловой шов — соединение, при котором детали расположены под углом (обычно 90°).\n\nПрименение:\n- Рамы\n- Рёбра жёсткости\n- Уголки и швеллеры\n\nСоветы:\n- Выбирайте катет по нагрузке\n- Варите с двух сторон\n- Контролируйте симметрию' }
+    ];
+    
+    // Tooltip system
+    let tooltipVisible = false;
+    let tooltipTimeout = null;
+    
+    function showTooltip(term, fullText, event) {
+      hideTooltip();
+      
+      const termData = glossary.find(g => g.t === term);
+      if (!termData) return;
+      
+      // Create tooltip
+      const tooltip = document.createElement('div');
+      tooltip.id = 'glossary-tooltip';
+      tooltip.style.cssText = 'position:fixed;z-index:10000;background:var(--bg-card);border:1px solid var(--border);border-radius:12px;padding:16px;max-width:320px;max-height:400px;overflow-y:auto;box-shadow:0 8px 32px rgba(0,0,0,0.3);font-size:0.9rem;line-height:1.5;';
+      
+      let html = '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;">';
+      html += '<strong style="color:var(--primary-light);font-size:1.1rem;">' + termData.t + '</strong>';
+      html += '<span class="glossary-tag" style="font-size:0.75rem;">' + termData.c + '</span>';
+      html += '</div>';
+      
+      // Parse full text
+      (termData.full || termData.d).split('\n').forEach(line => {
+        if (line.trim()) {
+          html += '<p style="margin:6px 0;">' + line + '</p>';
+        }
+      });
+      
+      tooltip.innerHTML = html;
+      document.body.appendChild(tooltip);
+      
+      // Position tooltip
+      const rect = event.target.getBoundingClientRect();
+      let top = rect.bottom + 8;
+      let left = rect.left;
+      
+      // Adjust if tooltip goes off screen
+      const tooltipRect = tooltip.getBoundingClientRect();
+      if (left + tooltipRect.width > window.innerWidth - 20) {
+        left = window.innerWidth - tooltipRect.width - 20;
+      }
+      if (top + tooltipRect.height > window.innerHeight - 20) {
+        top = rect.top - tooltipRect.height - 8;
+      }
+      
+      tooltip.style.top = top + 'px';
+      tooltip.style.left = left + 'px';
+      
+      tooltipVisible = true;
+      
+      // Auto-hide after 10 seconds
+      tooltipTimeout = setTimeout(hideTooltip, 10000);
+    }
+    
+    function hideTooltip() {
+      const tooltip = document.getElementById('glossary-tooltip');
+      if (tooltip) {
+        tooltip.remove();
+        tooltipVisible = false;
+      }
+      if (tooltipTimeout) {
+        clearTimeout(tooltipTimeout);
+        tooltipTimeout = null;
+      }
+    }
+    
+    // Add click handlers to glossary items
+    function addTooltipHandlers() {
+      document.querySelectorAll('.glossary-item').forEach(item => {
+        item.style.cursor = 'pointer';
+        item.title = 'Нажмите для определения';
+        // Remove old listener to avoid duplicates
+        const newEl = item.cloneNode(true);
+        item.parentNode.replaceChild(newEl, item);
+        newEl.addEventListener('click', (e) => {
+          const term = newEl.querySelector('h4').textContent;
+          const fullText = newEl.querySelector('p').textContent;
+          showTooltip(term, fullText, e);
+        });
+      });
+    }
+    
+    // Close tooltip on click outside
+    document.addEventListener('click', (e) => {
+      if (tooltipVisible && !e.target.closest('#glossary-tooltip') && !e.target.closest('.glossary-item')) {
+        hideTooltip();
+      }
+    });
+    
+    // Close tooltip on Escape
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') {
+        hideTooltip();
+      }
+    });
+
+    // === Defects ===
+    const defectIcons = {
+      'Непровар': '<svg viewBox="0 0 24 24"><path d="M4 4h16v4H4z M4 16h16v4H4z M4 10h4 M16 10h4" stroke="url(#g-primary)" stroke-width="2" fill="none"/></svg>',
+      'Поры': '<svg viewBox="0 0 24 24"><circle cx="6" cy="6" r="3" fill="url(#g-blue)"/><circle cx="18" cy="8" r="3" fill="url(#g-blue)"/><circle cx="9" cy="18" r="3" fill="url(#g-blue)"/><circle cx="18" cy="18" r="3" fill="url(#g-blue)"/></svg>',
+      'Трещины': '<svg viewBox="0 0 24 24"><path d="M4 20L20 4 M12 12l-6 6 M16 8l-6 6" stroke="url(#g-amber)" stroke-width="2" fill="none" stroke-linecap="round"/></svg>',
+      'Подрез': '<svg viewBox="0 0 24 24"><path d="M2 20h20 M6 20V10h6v10 M18 20V14h4v6" stroke="url(#g-primary)" stroke-width="2" fill="none"/></svg>',
+      'Шлак': '<svg viewBox="0 0 24 24"><path d="M4 4l16 16 M20 4L4 20" stroke="url(#g-green)" stroke-width="2" fill="none"/></svg>',
+      'Наплыв': '<svg viewBox="0 0 24 24"><path d="M4 12h16 M6 16h12" stroke="url(#g-amber)" stroke-width="3" fill="none"/></svg>',
+      'Кратер': '<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8" stroke="url(#g-primary)" stroke-width="2" fill="none"/><circle cx="12" cy="12" r="3" fill="url(#g-primary)"/></svg>',
+      'Окалина': '<svg viewBox="0 0 24 24"><path d="M4 4l16 16 M20 4L4 20" stroke="url(#g-amber)" stroke-width="2" fill="none"/></svg>'
+    };
+    const defects = [
+      { name:'Непровар', desc:'Металл не сплавился', cause:'Малый ток, высокая скорость', fix:'Увеличить ток, снизить скорость' },
+      { name:'Поры', desc:'Газовые полости', cause:'Влага, ржавчина, мало газа', fix:'Очистить, увеличить газ, просушить электроды' },
+      { name:'Трещины', desc:'Разрыв металла', cause:'Быстрое остывание, напряжения', fix:'Подогрев, медленное остывание' },
+      { name:'Подрез', desc:'Углубление по краю', cause:'Большой ток, длинная дуга', fix:'Снизить ток, укоротить дугу' },
+      { name:'Шлак', desc:'Включения шлака', cause:'Плохая очистка между проходами', fix:'Очищать каждый слой' },
+      { name:'Наплыв', desc:'Избыток металла', cause:'Малый ток, высокая скорость', fix:'Увеличить ток, снизить скорость' },
+      { name:'Кратер', desc:'Углубление в конце', cause:'Резкий обрыв дуги', fix:'Заваривать кратер' },
+      { name:'Окалина', desc:'Окисленный слой', cause:'Мало газа, высокая температура', fix:'Увеличить газ, снизить ток' }
+    ];
+    
+    // Related products for defects
+    const defectRelatedProducts = {
+      'Непровар': ['eq2', 'eq5', 'eq7'],
+      'Поры': ['eq3', 'eq6', 'eq11'],
+      'Трещины': ['eq0', 'eq4', 'eq9'],
+      'Подрез': ['eq2', 'eq5', 'eq10'],
+      'Шлак': ['eq2', 'eq7', 'eq12'],
+      'Наплыв': ['eq1', 'eq4', 'eq13'],
+      'Кратер': ['eq3', 'eq6', 'eq11'],
+      'Окалина': ['eq5', 'eq8', 'eq12']
+    };
+    
+    // Catalog data for related products
+    const catalog = [
+      { id:'eq0', type:'MIG/MAG', brand:'Miller', name:'Miller Multimatic 215', current:215, price:95000 },
+      { id:'eq1', type:'MIG/MAG', brand:'Lincoln', name:'Lincoln Power MIG 210', current:210, price:78000 },
+      { id:'eq2', type:'MMA', brand:'ESAB', name:'ESAB Rogue 180', current:180, price:35000 },
+      { id:'eq3', type:'TIG', brand:'Telwin', name:'Telwin Digital 181', current:180, price:42000 },
+      { id:'eq4', type:'MIG/MAG', brand:'Aurora', name:'Aurora VECTOR 2500', current:250, price:65000 },
+      { id:'eq5', type:'MMA', brand:'Ресанта', name:'Ресанта САИ 190', current:190, price:18000 },
+      { id:'eq6', type:'TIG', brand:'Сварог', name:'Сварог REAL TIG 200', current:200, price:55000 },
+      { id:'eq7', type:'MMA', brand:'Fubag', name:'Fubag IR 200', current:200, price:22000 },
+      { id:'eq8', type:'MMA', brand:'ESAB', name:'ESAB Buddy 150', current:150, price:15000 },
+      { id:'eq9', type:'MIG/MAG', brand:'EWM', name:'EWM Phoenix 351', current:350, price:180000 },
+      { id:'eq10', type:'MMA', brand:'Кедр', name:'Кедр ИНВЕРТОР-200', current:200, price:14000 },
+      { id:'eq11', type:'TIG', brand:'Fubag', name:'Fubag TIG 200 AC/DC', current:200, price:48000 },
+      { id:'eq12', type:'MMA', brand:'Ресанта', name:'Ресанта САИ 160', current:160, price:12000 },
+      { id:'eq13', type:'MIG/MAG', brand:'Сварог', name:'Сварог MIG 200', current:200, price:45000 }
+    ];
+    function renderDefects() {
+      document.getElementById('defectsGrid').innerHTML = defects.map((d, i) => '<div class="card defect-card" onclick="openDefect(' + i + ')"><div class="icon-box g-primary" style="width:52px;height:52px;margin-bottom:15px;">' + (defectIcons[d.name] || '') + '</div><div class="defect-name">' + d.name + '</div><div class="defect-desc">' + d.desc + '</div></div>').join('');
+    }
+    
+    function openDefect(i) {
+      const d = defects[i];
+      const relatedIds = defectRelatedProducts[d.name] || [];
+      const relatedItems = relatedIds.map(id => catalog.find(x => x.id === id)).filter(Boolean);
+      
+      let h = '<h2>' + d.name + '</h2>';
+      h += '<h3>Описание</h3><p>' + d.desc + '</p>';
+      h += '<h3>Причины</h3><p>' + d.cause + '</p>';
+      h += '<h3>Устранение</h3><p>' + d.fix + '</p>';
+      
+      // Related products section
+      if (relatedItems.length > 0) {
+        h += '<h3 style="margin-top:25px;">Рекомендуемое оборудование</h3>';
+        h += '<div class="grid" style="grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px;margin-top:12px;">';
+        relatedItems.forEach(e => {
+          h += '<div class="card" style="padding:15px;cursor:pointer;" onclick="location.href=\'catalog.html\'">';
+          h += '<div style="font-weight:700;margin-bottom:5px;">' + e.brand + ' ' + e.name + '</div>';
+          h += '<div style="color:var(--text-muted);font-size:0.85rem;margin-bottom:8px;">' + e.type + ' · ' + e.current + 'A</div>';
+          h += '<div style="font-weight:900;color:var(--primary-light);">' + e.price.toLocaleString() + ' ₽</div>';
+          h += '</div>';
+        });
+        h += '</div>';
+      }
+      
+      document.getElementById('modalBody').innerHTML = h;
+      document.getElementById('modalOverlay').classList.add('open');
+    }
+    function showDefect3d(name) {
+      const d = defects.find(x => x.name === name);
+      if (!d) return;
+      document.getElementById('defect3dInfo').innerHTML = '<h4>' + d.name + '</h4><p><strong>Описание:</strong> ' + d.desc + '</p><p><strong>Причины:</strong> ' + d.cause + '</p><p><strong>Устранение:</strong> ' + d.fix + '</p><a href="defect-' + d.name.toLowerCase().replace(/\s+/g, '-') + '.html" class="btn btn-primary btn-sm" style="margin-top:10px;">Подробнее о дефекте</a>';
+    }
+
+    // === Reference ===
+    const materials = [
+      { icon:'<svg viewBox="0 0 24 24"><path d="M4 20h16 M6 20V9l6-5 6 5v11 M10 20v-4h4v4" stroke="url(#g-primary)" stroke-width="2" fill="none" stroke-linecap="round"/></svg>', name:'Углеродистая сталь', desc:'Ст3, 09Г2С, 20, 45', full:'Углеродистые стали — основной материал.\n\nМарки:\n- Ст3 — строительная\n- 09Г2С — низколегированная\n- Сталь 20 — общего назначения\n- Сталь 45 — инструментальная\n\nСвойства:\n- Прочность: 370-600 МПа\n- Свариваемость: хорошая\n- Подогрев при >20мм\n\nПрименение: строительство, трубы, машиностроение' },
+      { icon:'<svg viewBox="0 0 24 24"><path d="M12 2a7 7 0 0 0-7 7c0 3 2 5 2 7h10c0-2 2-4 2-7a7 7 0 0 0-7-7z M9 20h6 M10 22h4" stroke="url(#g-blue)" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>', name:'Нержавеющая сталь', desc:'12Х18Н10Т, AISI 304, 316', full:'Нержавеющие стали.\n\nМарки:\n- 12Х18Н10Т — классика\n- AISI 304 — пищевая\n- AISI 316 — морская\n\nСвойства:\n- Стойкость к коррозии\n- Свариваемость: TIG/MIG\n- Аргон, низкий ток\n\nПрименение: пищевая, химическая, медицина' },
+      { icon:'<svg viewBox="0 0 24 24"><path d="M12 2a4 4 0 0 1 4 4c0 1.5-.8 2.8-2 3.5V20a2 2 0 0 1-4 0V9.5a4 4 0 0 1 2-7.5z" stroke="url(#g-green)" stroke-width="2" fill="none" stroke-linejoin="round"/></svg>', name:'Алюминий', desc:'АМг, АД31, 6061', full:'Алюминий и сплавы.\n\nМарки:\n- АМг — алюминиево-магниевый\n- АД31 — деформируемый\n- 6061 — конструкционный\n\nСвойства:\n- Плотность: 2.7 г/см3\n- Лёгкий, коррозионностойкий\n- AC ток, очистка плёнки\n\nПрименение: авиация, авто, строительство' },
+      { icon:'<svg viewBox="0 0 24 24"><path d="M12 2a7 7 0 0 1 7 7c0 5-7 13-7 13S5 14 5 9a7 7 0 0 1 7-7z M12 11a2 2 0 1 0 0-4 2 2 0 0 0 0 4z" stroke="url(#g-purple)" stroke-width="2" fill="none" stroke-linejoin="round"/></svg>', name:'Титан', desc:'ВТ1-0, ВТ6', full:'Титан и сплавы.\n\nМарки:\n- ВТ1-0 — технический\n- ВТ6 — прочный\n\nСвойства:\n- Плотность: 4.5 г/см3\n- Прочность: до 1200 МПа\n- Чистый аргон, защита с двух сторон\n\nПрименение: авиация, химия, медицина' },
+      { icon:'<svg viewBox="0 0 24 24"><path d="M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20z M12 7v5l3 3" stroke="url(#g-amber)" stroke-width="2" fill="none" stroke-linecap="round"/></svg>', name:'Медь', desc:'М1, М2, бронза', full:'Медь и сплавы.\n\nМарки:\n- М1 — техническая\n- Бронза\n\nСвойства:\n- Высокая теплопроводность\n- Высокий ток, подогрев\n\nПрименение: электротехника, теплообменники' }
+    ];
+    function renderReference() { document.getElementById('refGrid').innerHTML = materials.map((m, i) => '<div class="card ref-card" onclick="openRef(' + i + ')"><div class="icon-box g-primary" style="width:52px;height:52px;margin-bottom:12px;">' + m.icon + '</div><div class="ref-name">' + m.name + '</div><div class="ref-desc">' + m.desc + '</div></div>').join(''); }
+    function openRef(i) { const m = materials[i]; let h = '<h2>' + m.name + '</h2>'; m.full.split('\n').forEach(line => { if (line.trim()) h += '<p>' + line + '</p>'; }); document.getElementById('modalBody').innerHTML = h; document.getElementById('modalOverlay').classList.add('open'); }
+    
+    // Glossary rendering
+    let glossaryCat = 'Все';
+    function renderGlossary() {
+      const search = document.getElementById('glossarySearch').value.toLowerCase();
+      document.getElementById('glossaryCats').innerHTML = glossaryCats.map(c => '<button class="cat-btn' + (glossaryCat === c ? ' active' : '') + '" onclick="setGlossaryCat(\'' + c + '\')">' + c + '</button>').join('');
+      const filtered = glossary.filter(g => (glossaryCat === 'Все' || g.c === glossaryCat) && (!search || g.t.toLowerCase().includes(search) || g.d.toLowerCase().includes(search)));
+      document.getElementById('glossaryList').innerHTML = filtered.map(g => { const safeT = g.t.replace(/'/g, String.fromCharCode(92) + "'"); return '<div class="glossary-item" onclick="openGlossary(\'' + safeT + '\')"><h4>' + g.t + '</h4><p>' + g.d + '</p><span class="glossary-tag">' + g.c + '</span></div>'; }).join('');
+      if (filtered.length === 0) document.getElementById('glossaryList').innerHTML = '<div style="color:var(--text-muted);padding:20px;">Ничего не найдено</div>';
+      addTooltipHandlers();
+    }
+    function setGlossaryCat(c) { glossaryCat = c; renderGlossary(); }
+    function openGlossary(t) { const g = glossary.find(x => x.t === t); if (g) { let h = '<h2>' + g.t + '</h2><h3>' + g.c + '</h3>'; (g.full || g.d).split('\n').forEach(line => { if (line.trim()) h += '<p>' + line + '</p>'; }); document.getElementById('modalBody').innerHTML = h; document.getElementById('modalOverlay').classList.add('open'); } }
+
+    renderGlossary();
+    renderDefects();
+    renderReference();
+    addTooltipHandlers();
+  </script>
+</body>
+</html>

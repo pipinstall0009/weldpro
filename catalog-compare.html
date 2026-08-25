@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Сравнение сварочных аппаратов — WELDPRO | Матрица характеристик</title>
+  <meta name="description" content="Интерактивная матрица сравнения сварочных аппаратов: максимальный ток, ПВ%, диаметры расходных материалов, вес, функции Arc Force и Hot Start." />
+  <meta name="keywords" content="сравнение сварочных аппаратов, матрица характеристик, максимальный ток, ПВ, функции" />
+  <link rel="manifest" href="manifest.json" />
+  <link rel="stylesheet" href="css/styles.css" />
+</head>
+<body>
+  <div class="loader" id="loader"><div class="loader-logo">WELDPRO</div><div class="loader-bar"><div class="loader-bar-fill"></div></div></div>
+  <div class="bg-anim"></div>
+  <div class="sparks" id="sparks"></div>
+
+  <nav class="navbar" id="navbar">
+    <a href="index.html" class="nav-logo">
+      <div class="nav-logo-icon"><svg viewBox="0 0 24 24" width="28" height="28"><path d="M13 2 L4 14 L11 14 L9 22 L20 9 L13 9 Z" fill="url(#g-primary)"/></svg></div>
+      WELD<span>PRO</span>
+    </a>
+    <ul class="nav-links" id="navLinks">
+      <li><a href="index.html">Главная</a></li>
+      <li><a href="catalog.html">Каталог</a></li>
+      <li><a href="calculators.html">Калькуляторы</a></li>
+      <li><a href="wiki.html">База знаний</a></li>
+      <li><a href="account.html">Личный кабинет</a></li>
+    </ul>
+    <div class="nav-right">
+      <button class="theme-btn" onclick="toggleTheme()"><svg viewBox="0 0 24 24" width="20" height="20"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z" fill="currentColor"/></svg></button>
+      <div class="burger" id="burger" onclick="toggleBurger()"><span></span><span></span><span></span></div>
+    </div>
+  </nav>
+
+  <section class="section" style="padding-top:120px;">
+    <div class="container">
+      <div class="section-header reveal">
+        <div class="section-tag"><svg viewBox="0 0 24 24" width="14" height="14"><path d="M3 12h18 M9 6l-6 6 6 6 M15 6l6 6-6 6" stroke="url(#g-primary)" stroke-width="2" fill="none" stroke-linecap="round"/></svg>Сравнение</div>
+        <h1 class="section-title">Матрица сравнения аппаратов</h1>
+        <p class="section-desc">Выберите до 5 аппаратов для детального сравнения по ключевым параметрам: Макс. ток, ПВ%, диаметры расходников, вес, функции.</p>
+      </div>
+
+      <!-- Selection Panel -->
+      <div class="tool-card reveal" style="margin-bottom:30px;">
+        <h3 style="margin-bottom:15px;">Выберите аппараты для сравнения</h3>
+        <div class="form-group">
+          <label>Тип оборудования</label>
+          <select id="cmpType" onchange="renderCompareSelects()">
+            <option value="">Все типы</option>
+            <option value="MIG/MAG">MIG/MAG</option>
+            <option value="TIG">TIG</option>
+            <option value="MMA">MMA</option>
+          </select>
+        </div>
+        <div id="compareSelects" class="compare-selects-grid"></div>
+        <div style="display:flex;gap:10px;margin-top:15px;flex-wrap:wrap;">
+          <button class="btn btn-primary" onclick="buildCompareMatrix()">Построить матрицу</button>
+          <button class="btn btn-outline" onclick="selectAll()">Выбрать все</button>
+          <button class="btn btn-outline" onclick="clearCompareSelect()">Очистить</button>
+        </div>
+        <div id="cmpSelectionInfo" style="margin-top:10px;color:var(--text-muted);"></div>
+      </div>
+
+      <!-- Matrix Table -->
+      <div id="compareMatrixWrap" style="display:none;">
+        <div class="tool-card reveal" style="margin-bottom:30px;overflow-x:auto;">
+          <h3 style="margin-bottom:15px;" id="cmpMatrixTitle">Сравнение аппаратов</h3>
+          <div id="compareMatrix"></div>
+        </div>
+
+        <!-- Highlight Summary -->
+        <div class="tool-card reveal" style="margin-bottom:30px;">
+          <h3 style="margin-bottom:15px;">Лучшие показатели</h3>
+          <div id="cmpHighlights"></div>
+        </div>
+
+        <!-- Export -->
+        <div style="text-align:center;margin-bottom:40px;">
+          <button class="btn btn-primary" onclick="exportComparePDF()">Экспорт в PDF</button>
+          <a href="catalog.html" class="btn btn-outline" style="margin-left:10px;">Вернуться в каталог</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <footer class="footer">
+    <div class="footer-content">
+      <a href="index.html" class="footer-logo"><svg viewBox="0 0 24 24" width="28" height="28"><path d="M13 2 L4 14 L11 14 L9 22 L20 9 L13 9 Z" fill="url(#g-primary)"/></svg>WELD<span>PRO</span></a>
+      <div class="footer-links">
+        <a href="catalog.html">Каталог</a><a href="calculators.html">Калькуляторы</a><a href="wiki.html">База знаний</a><a href="account.html">Личный кабинет</a>
+      </div>
+    </div>
+    <div class="footer-bottom">&copy; 2026 WELDPRO. Все права защищены.</div>
+  </footer>
+
+  <button class="scroll-top" id="scrollTop" onclick="scrollToTop()"><svg viewBox="0 0 24 24"><path d="M12 19V5 M5 12l7-7 7 7" stroke="white" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+
+  <script src="js/app.js"></script>
+  <script>
+    // === Catalog Data ===
+    const catalog = [
+      { id:'eq0', type:'MIG/MAG', brand:'Miller', name:'Miller Multimatic 215', desc:'Мультипроцессорный аппарат MIG/TIG/MMA. Премиум.', current:215, weight:5.5, price:95000, specs:{ 'Напряжение':'110/230V','Макс. ток':'215A','ПВ (60%)':'150A','Вес':'5.5 кг','Гарантия':'3 года','Arc Force':'Да','Hot Start':'Да' }, wireDia:'0.6–1.2 мм', consumables:'MIG/MAG, TIG, MMA', storeLinks:{ 'ВсеИнструменты':'https://www.vseinstrumenti.ru','Кувалда.ру':'https://kivalka.ru' } },
+      { id:'eq1', type:'MIG/MAG', brand:'Lincoln', name:'Lincoln Power MIG 210', desc:'Полуавтомат с синергетическим управлением.', current:210, weight:13.6, price:78000, specs:{ 'Напряжение':'230V','Макс. ток':'210A','ПВ (60%)':'140A','Вес':'13.6 кг','Гарантия':'2 года','Arc Force':'Да','Hot Start':'Да' }, wireDia:'0.6–1.0 мм', consumables:'MIG/MAG', storeLinks:{ 'ВсеИнструменты':'https://www.vseinstrumenti.ru' } },
+      { id:'eq2', type:'MMA', brand:'ESAB', name:'ESAB Rogue 180', desc:'Инвертор MMA. Antistick и Hot Start.', current:180, weight:4.7, price:35000, specs:{ 'Напряжение':'230V','Макс. ток':'180A','ПВ (60%)':'120A','Вес':'4.7 кг','Гарантия':'2 года','Antistick':'Да','Hot Start':'Да' }, wireDia:'2.0–4.0 мм', consumables:'MMA', storeLinks:{ 'ВсеИнструменты':'https://www.vseinstrumenti.ru','ТехноЯрмарка':'https://technoyarmarka.ru' } },
+      { id:'eq3', type:'TIG', brand:'Telwin', name:'Telwin Digital 181', desc:'TIG и MMA с импульсным режимом.', current:180, weight:7, price:42000, specs:{ 'Напряжение':'230V','Макс. ток':'180A','ПВ (60%)':'110A','Вес':'7 кг','Гарантия':'2 года','Импульс':'Да','Hot Start':'Да' }, wireDia:'1.6–2.4 мм', consumables:'TIG, MMA', storeLinks:{ 'ВсеИнструменты':'https://www.vseinstrumenti.ru' } },
+      { id:'eq4', type:'MIG/MAG', brand:'Aurora', name:'Aurora VECTOR 2500', desc:'Полуавтомат для производства.', current:250, weight:15, price:65000, specs:{ 'Напряжение':'230V','Макс. ток':'250A','ПВ (60%)':'180A','Вес':'15 кг','Гарантия':'2 года','Arc Force':'Да' }, wireDia:'0.8–1.2 мм', consumables:'MIG/MAG', storeLinks:{ 'ВсеИнструменты':'https://www.vseinstrumenti.ru','Кувалда.ру':'https://kivalka.ru' } },
+      { id:'eq5', type:'MMA', brand:'Ресанта', name:'Ресанта САИ 190', desc:'Компактный инвертор для бытовых задач.', current:190, weight:4.5, price:18000, specs:{ 'Напряжение':'220V','Макс. ток':'190A','ПВ (60%)':'130A','Вес':'4.5 кг','Гарантия':'1 год','Antistick':'Да','Hot Start':'Да' }, wireDia:'2.0–5.0 мм', consumables:'MMA', storeLinks:{ 'ВсеИнструменты':'https://www.vseinstrumenti.ru','Кувалда.ру':'https://kivalka.ru' } },
+      { id:'eq6', type:'TIG', brand:'Сварог', name:'Сварог REAL TIG 200', desc:'TIG AC/DC для алюминия и нержавейки.', current:200, weight:12, price:55000, specs:{ 'Напряжение':'230V','Макс. ток':'200A','ПВ (60%)':'140A','Вес':'12 кг','Гарантия':'3 года','AC/DC':'Да','Импульс':'Да','Hot Start':'Да' }, wireDia:'1.6–3.2 мм', consumables:'TIG', storeLinks:{ 'ВсеИнструменты':'https://www.vseinstrumenti.ru','ТехноЯрмарка':'https://technoyarmarka.ru' } },
+      { id:'eq7', type:'MMA', brand:'Fubag', name:'Fubag IR 200', desc:'MMA с дисплеем и Arc Force.', current:200, weight:4.8, price:22000, specs:{ 'Напряжение':'230V','Макс. ток':'200A','ПВ (60%)':'140A','Вес':'4.8 кг','Гарантия':'2 года','Arc Force':'Да','Hot Start':'Да' }, wireDia:'2.0–5.0 мм', consumables:'MMA', storeLinks:{ 'ВсеИнструменты':'https://www.vseinstrumenti.ru' } },
+      { id:'eq8', type:'MMA', brand:'ESAB', name:'ESAB Buddy 150', desc:'Компактный MMA для дачи и ремонта.', current:150, weight:3.9, price:15000, specs:{ 'Напряжение':'230V','Макс. ток':'150A','ПВ (60%)':'110A','Вес':'3.9 кг','Гарантия':'2 года','Antistick':'Да' }, wireDia:'2.0–4.0 мм', consumables:'MMA', storeLinks:{ 'ВсеИнструменты':'https://www.vseinstrumenti.ru' } },
+      { id:'eq9', type:'MIG/MAG', brand:'EWM', name:'EWM Phoenix 351', desc:'Промышленный полуавтомат. Топ.', current:350, weight:32, price:180000, specs:{ 'Напряжение':'380V','Макс. ток':'350A','ПВ (60%)':'280A','Вес':'32 кг','Гарантия':'3 года','Arc Force':'Да','Hot Start':'Да' }, wireDia:'0.8–1.6 мм', consumables:'MIG/MAG', storeLinks:{ 'ВсеИнструменты':'https://www.vseinstrumenti.ru','ТехноЯрмарка':'https://technoyarmarka.ru' } },
+      { id:'eq10', type:'MMA', brand:'Кедр', name:'Кедр ИНВЕРТОР-200', desc:'Доступный инвертор для бытовых задач.', current:200, weight:4.2, price:14000, specs:{ 'Напряжение':'220V','Макс. ток':'200A','ПВ (60%)':'130A','Вес':'4.2 кг','Гарантия':'1 год','Antistick':'Да','Hot Start':'Да' }, wireDia:'2.0–5.0 мм', consumables:'MMA', storeLinks:{ 'ВсеИнструменты':'https://www.vseinstrumenti.ru','Кувалда.ру':'https://kivalka.ru' } },
+      { id:'eq11', type:'TIG', brand:'Fubag', name:'Fubag TIG 200 AC/DC', desc:'TIG AC/DC для алюминия. Импульс.', current:200, weight:10, price:48000, specs:{ 'Напряжение':'230V','Макс. ток':'200A','ПВ (60%)':'140A','Вес':'10 кг','Гарантия':'2 года','AC/DC':'Да','Импульс':'Да','Hot Start':'Да' }, wireDia:'1.6–3.2 мм', consumables:'TIG', storeLinks:{ 'ВсеИнструменты':'https://www.vseinstrumenti.ru' } },
+      { id:'eq12', type:'MMA', brand:'Ресанта', name:'Ресанта САИ 160', desc:'Бюджетный инвертор для дома.', current:160, weight:3.5, price:12000, specs:{ 'Напряжение':'220V','Макс. ток':'160A','ПВ (60%)':'100A','Вес':'3.5 кг','Гарантия':'1 год','Antistick':'Да','Hot Start':'Да' }, wireDia:'2.0–4.0 мм', consumables:'MMA', storeLinks:{ 'ВсеИнструменты':'https://www.vseinstrumenti.ru','Кувалда.ру':'https://kivalka.ru' } },
+      { id:'eq13', type:'MIG/MAG', brand:'Сварог', name:'Сварог MIG 200', desc:'Полуавтомат для гаража и цеха.', current:200, weight:14, price:45000, specs:{ 'Напряжение':'230V','Макс. ток':'200A','ПВ (60%)':'140A','Вес':'14 кг','Гарантия':'2 года','Arc Force':'Да','Hot Start':'Да' }, wireDia:'0.8–1.2 мм', consumables:'MIG/MAG', storeLinks:{ 'ВсеИнструменты':'https://www.vseinstrumenti.ru','ТехноЯрмарка':'https://technoyarmarka.ru' } }
+    ];
+
+    const eqIcons = {
+      'MIG/MAG': '<svg viewBox="0 0 24 24" width="16" height="16"><path d="M13 2 L4 14 L11 14 L9 22 L20 9 L13 9 Z" fill="url(#g-primary)"/></svg>',
+      'TIG': '<svg viewBox="0 0 24 24" width="16" height="16"><path d="M12 2a7 7 0 0 0-7 7c0 3 2 5 2 7h10c0-2 2-4 2-7a7 7 0 0 0-7-7z M9 20h6 M10 22h4" stroke="url(#g-blue)" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>',
+      'MMA': '<svg viewBox="0 0 24 24" width="16" height="16"><path d="M5 3l16 16-2 2L3 5z M9 7l8 8" stroke="url(#g-amber)" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>'
+    };
+
+    let selectedIds = [];
+
+    function getStoreIcons(name) {
+      const icons = {
+        'ВсеИнструменты': '<svg viewBox="0 0 24 24" width="20" height="20"><rect x="2" y="4" width="20" height="16" rx="3" fill="#FF5722"/><path d="M7 12h10 M12 7v10" stroke="white" stroke-width="2" stroke-linecap="round"/></svg>',
+        'Кувалда.ру': '<svg viewBox="0 0 24 24" width="20" height="20"><circle cx="12" cy="12" r="9" fill="#FF9800"/><path d="M8 12h8 M12 8v8" stroke="white" stroke-width="2" stroke-linecap="round"/></svg>',
+        'ТехноЯрмарка': '<svg viewBox="0 0 24 24" width="20" height="20"><rect x="3" y="3" width="18" height="18" rx="4" fill="#2196F3"/><path d="M7 12h10 M12 7v10" stroke="white" stroke-width="2" stroke-linecap="round"/></svg>'
+      };
+      return icons[name] || '<svg viewBox="0 0 24 24" width="20" height="20"><circle cx="12" cy="12" r="9" fill="#607D8B"/></svg>';
+    }
+
+    function renderCompareSelects() {
+      const ft = document.getElementById('cmpType').value;
+      let filtered = catalog.filter(e => !ft || e.type === ft);
+      document.getElementById('compareSelects').innerHTML = filtered.map(e =>
+        '<label class="compare-select-item"><input type="checkbox" value="' + e.id + '" onchange="updateSelection()" /> ' +
+        eqIcons[e.type] + ' <strong>' + e.brand + ' ' + e.name + '</strong> <span style="color:var(--text-muted);font-size:0.85rem;">' + e.current + 'A · ' + e.weight + 'кг · ' + e.price.toLocaleString() + ' ₽</span></label>'
+      ).join('');
+      updateSelection();
+    }
+
+    function updateSelection() {
+      const boxes = document.querySelectorAll('#compareSelects input[type="checkbox"]');
+      selectedIds = Array.from(boxes).filter(b => b.checked).map(b => b.value);
+      if (selectedIds.length > 5) {
+        alert('Максимум 5 аппаратов для сравнения!');
+        boxes[boxes.length - 1].checked = false;
+        selectedIds = selectedIds.slice(0, 5);
+      }
+      document.getElementById('cmpSelectionInfo').textContent = 'Выбрано: ' + selectedIds.length + ' из ' + catalog.length + ' (макс. 5)';
+    }
+
+    function selectAll() {
+      const boxes = document.querySelectorAll('#compareSelects input[type="checkbox"]');
+      const show = boxes.length > 0 && boxes[0].checked;
+      boxes.forEach(b => b.checked = !show);
+      updateSelection();
+    }
+
+    function clearCompareSelect() {
+      document.querySelectorAll('#compareSelects input[type="checkbox"]').forEach(b => b.checked = false);
+      updateSelection();
+    }
+
+    function parsePct(val) { return parseFloat((val || '').replace(/\D/g, '')) || 0; }
+
+    function buildCompareMatrix() {
+      if (selectedIds.length < 2) { alert('Выберите минимум 2 аппарата!'); return; }
+      const items = selectedIds.map(id => catalog.find(x => x.id === id)).filter(Boolean);
+      document.getElementById('cmpMatrixTitle').textContent = 'Сравнение: ' + items.map(e => e.brand + ' ' + e.name).join(' · ');
+      document.getElementById('compareMatrixWrap').style.display = 'block';
+
+      let h = '<table class="norm-table"><thead><tr><th style="width:20%;">Параметр</th>';
+      items.forEach(e => { h += '<th style="width:' + (80/items.length) + '%;"><div style="text-align:center;">' + eqIcons[e.type] + ' ' + e.type + '</div><div style="text-align:center;font-weight:700;">' + e.brand + ' ' + e.name + '</div></th>'; });
+      h += '</tr></thead><tbody>';
+
+      // Max Current
+      const maxCurrent = Math.max(...items.map(e => e.current));
+      items.forEach(e => {
+        const best = e.current === maxCurrent;
+        h += '<tr><td class="lbl"><strong>Макс. ток</strong></td><td' + (best ? ' style="color:#4CAF50;font-weight:700;"' : '') + '>' + e.current + ' A' + (best ? ' ★' : '') + '</td></tr>';
+      });
+
+      // PV% at 60%
+      const pvVals = items.map(e => parsePct(e.specs['ПВ (60%)'] || '0'));
+      const maxPV = Math.max(...pvVals);
+      h += '<tr><td class="lbl"><strong>ПВ (продолжительность включения)</strong></td>';
+      items.forEach(e => {
+        const pv = parsePct(e.specs['ПВ (60%)'] || '0');
+        const best = pv === maxPV;
+        h += '<td' + (best ? ' style="color:#4CAF50;font-weight:700;"' : '') + '>' + pv + ' A' + (best ? ' ★' : '') + '</td></tr>';
+      });
+
+      // Weight
+      const minWeight = Math.min(...items.map(e => e.weight));
+      h += '<tr><td class="lbl"><strong>Вес</strong></td>';
+      items.forEach(e => {
+        const best = e.weight === minWeight;
+        h += '<td' + (best ? ' style="color:#4CAF50;font-weight:700;"' : '') + '>' + e.weight + ' кг' + (best ? ' ★' : '') + '</td></tr>';
+      });
+
+      // Price
+      const minPrice = Math.min(...items.map(e => e.price));
+      h += '<tr><td class="lbl"><strong>Цена</strong></td>';
+      items.forEach(e => {
+        const best = e.price === minPrice;
+        h += '<td' + (best ? ' style="color:#4CAF50;font-weight:700;"' : '') + '>' + e.price.toLocaleString() + ' ₽' + (best ? ' ★' : '') + '</td></tr>';
+      });
+
+      // Wire diameter
+      h += '<tr><td class="lbl"><strong>Диаметр расходников</strong></td>';
+      items.forEach(e => { h += '<td>' + (e.wireDia || '—') + '</td></tr>'; });
+
+      // Consumables
+      h += '<tr><td class="lbl"><strong>Расходные материалы</strong></td>';
+      items.forEach(e => { h += '<td>' + (e.consumables || '—') + '</td></tr>'; });
+
+      // === Section 2: Functions ===
+      h += '<tr><td colspan="' + (items.length + 1) + '" style="background:#f5f5f5;font-weight:700;font-size:13px;">Функции и возможности</td></tr>';
+
+      const functionKeys = ['Arc Force', 'Hot Start', 'Antistick', 'Импульс', 'AC/DC'];
+      functionKeys.forEach(func => {
+        h += '<tr><td class="lbl">' + func + '</td>';
+        items.forEach(e => {
+          const val = e.specs[func] || 'Нет';
+          const isYes = val === 'Да';
+          h += '<td' + (isYes ? ' style="color:#4CAF50;"' : (val === 'Нет' ? ' style="color:#999;"' : '')) + '>' + val + '</td></tr>';
+        });
+      });
+
+      // Voltage
+      h += '<tr><td class="lbl"><strong>Напряжение питания</strong></td>';
+      items.forEach(e => { h += '<td>' + (e.specs['Напряжение'] || '—') + '</td></tr>'; });
+
+      // Warranty
+      h += '<tr><td class="lbl"><strong>Гарантия</strong></td>';
+      items.forEach(e => { h += '<td>' + (e.specs['Гарантия'] || '—') + '</td></tr>'; });
+
+      // Store links
+      h += '<tr><td class="lbl"><strong>Где купить</strong></td>';
+      items.forEach(e => {
+        if (e.storeLinks && Object.keys(e.storeLinks).length > 0) {
+          h += '<td><div class="store-btns">';
+          Object.entries(e.storeLinks).forEach(([name, url]) => {
+            h += '<a href="' + url + '" target="_blank" class="store-btn" title="' + name + '">' + getStoreIcons(name) + '<span>' + name + '</span></a>';
+          });
+          h += '</div></td>';
+        } else {
+          h += '<td>—</td>';
+        }
+        h += '</tr>';
+      });
+
+      h += '</tbody></table>';
+      document.getElementById('compareMatrix').innerHTML = h;
+
+      // === Section 3: Highlights ===
+      let hl = '<div class="grid" style="grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:15px;">';
+      const bestCurrent = items.reduce((a, b) => a.current > b.current ? a : b);
+      const bestPV = items.reduce((a, b) => parsePct(a.specs['ПВ (60%)']) > parsePct(b.specs['ПВ (60%)']) ? a : b);
+      const lightest = items.reduce((a, b) => a.weight < b.weight ? a : b);
+      const cheapest = items.reduce((a, b) => a.price < b.price ? a : b);
+      const mostFuncs = items.map(e => ({ e, cnt: functionKeys.filter(f => e.specs[f] === 'Да').length })).sort((a,b) => b.cnt - a.cnt)[0].e;
+
+      const highlights = [
+        { icon: '⚡', title: 'Лучший по току', desc: bestCurrent.brand + ' ' + bestCurrent.name + ' — ' + bestCurrent.current + 'A' },
+        { icon: '🔋', title: 'Лучший по ПВ', desc: bestPV.brand + ' ' + bestPV.name + ' — ' + parsePct(bestPV.specs['ПВ (60%)']) + 'A' },
+        { icon: '🪶', title: 'Самый лёгкий', desc: lightest.brand + ' ' + lightest.name + ' — ' + lightest.weight + ' кг' },
+        { icon: '💰', title: 'Лучшая цена', desc: cheapest.brand + ' ' + cheapest.name + ' — ' + cheapest.price.toLocaleString() + ' ₽' },
+        { icon: '🔧', title: 'Больше всего функций', desc: mostFuncs.brand + ' ' + mostFuncs.name + ' — ' + functionKeys.filter(f => mostFuncs.specs[f] === 'Да').length + ' из ' + functionKeys.length }
+      ];
+
+      highlights.forEach(item => {
+        hl += '<div class="card"><div style="font-size:1.5rem;margin-bottom:8px;">' + item.icon + '</div><div style="font-weight:700;margin-bottom:5px;">' + item.title + '</div><div style="color:var(--text-muted);font-size:0.9rem;">' + item.desc + '</div></div>';
+      });
+      hl += '</div>';
+      document.getElementById('cmpHighlights').innerHTML = hl;
+
+      document.getElementById('compareMatrixWrap').scrollIntoView({ behavior: 'smooth' });
+    }
+
+    function exportComparePDF() {
+      const table = document.getElementById('compareMatrix');
+      const highlights = document.getElementById('cmpHighlights');
+      const title = document.getElementById('cmpMatrixTitle').textContent;
+      const win = window.open('', '_blank');
+      win.document.write(`
+        <html><head><meta charset="UTF-8"><title>${title}</title>
+        <style>body{font-family:Arial,sans-serif;padding:30px;color:#333}
+        h1{color:#FF5722;font-size:18px}
+        table{width:100%;border-collapse:collapse;margin:20px 0}
+        th,td{border:1px solid #333;padding:6px 10px;text-align:left;font-size:11px}
+        th{background:#f0f0f0;font-weight:700}
+        .lbl{background:#f9f9f9;font-weight:600}
+        @media print{body{padding:10mm}}</style></head>
+        <body><h1>${title}</h1><p>Дата: ${new Date().toLocaleDateString('ru-RU')} | WELDPRO — Сравнение оборудования</p>
+        ${table.outerHTML}
+        <h2 style="margin-top:30px;">Лучшие показатели</h2>
+        ${highlights.innerHTML}
+        <p style="margin-top:40px;font-size:9px;color:#666;">Данные являются расчётными на основе спецификаций производителей. WELDPRO не несёт ответственности за изменения характеристик.</p>
+        </body></html>
+      `);
+      win.document.close();
+      setTimeout(() => win.print(), 500);
+    }
+
+    // Init
+    renderCompareSelects();
+  </script>
+</body>
+</html>

@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Личный кабинет — WELDPRO | Синхронизация с приложением</title>
+  <meta name="description" content="Личный кабинет сварщика WELDPRO. Синхронизация данных с Windows-приложением: журнал работ, сметы, избранное, история расчётов." />
+  <meta name="keywords" content="личный кабинет сварщика, синхронизация weldpro, журнал сварочных работ, сметы сварки" />
+  <link rel="manifest" href="manifest.json" />
+  <link rel="stylesheet" href="css/styles.css" />
+</head>
+<body>
+  <div class="loader" id="loader"><div class="loader-logo">WELDPRO</div><div class="loader-bar"><div class="loader-bar-fill"></div></div></div>
+  <div class="bg-anim"></div>
+  <div class="sparks" id="sparks"></div>
+
+  <nav class="navbar" id="navbar">
+    <a href="index.html" class="nav-logo">
+      <div class="nav-logo-icon"><svg viewBox="0 0 24 24" width="28" height="28"><path d="M13 2 L4 14 L11 14 L9 22 L20 9 L13 9 Z" fill="url(#g-primary)"/></svg></div>
+      WELD<span>PRO</span>
+    </a>
+    <ul class="nav-links" id="navLinks">
+      <li><a href="index.html">Главная</a></li>
+      <li><a href="catalog.html">Каталог</a></li>
+      <li><a href="calculators.html">Калькуляторы</a></li>
+      <li><a href="wiki.html">База знаний</a></li>
+      <li><a href="account.html" class="active">Личный кабинет</a></li>
+    </ul>
+    <div class="nav-right">
+      <button class="theme-btn" onclick="toggleTheme()"><svg viewBox="0 0 24 24" width="20" height="20"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z" fill="currentColor"/></svg></button>
+      <div class="burger" id="burger" onclick="toggleBurger()"><span></span><span></span><span></span></div>
+    </div>
+  </nav>
+
+  <section class="section" style="padding-top:120px;">
+    <div class="container">
+      <div class="section-header reveal">
+        <div class="section-tag"><svg viewBox="0 0 24 24" width="14" height="14"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2 M12 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8z" stroke="url(#g-primary)" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>Аккаунт</div>
+        <h1 class="section-title">Личный кабинет</h1>
+        <p class="section-desc">Входите или регистрируйтесь для синхронизации данных с Windows-приложением WELDPRO.</p>
+      </div>
+
+      <!-- Auth Forms -->
+      <div class="auth-guest" style="max-width:500px;margin:0 auto;">
+        <div class="auth-tabs reveal">
+          <button class="auth-tab active" data-tab="login" onclick="switchAuthTab('login')">Вход</button>
+          <button class="auth-tab" data-tab="register" onclick="switchAuthTab('register')">Регистрация</button>
+        </div>
+        <div class="tool-card reveal">
+          <form class="auth-form active" id="loginForm" onsubmit="login(event)">
+            <div class="form-group"><label>Email</label><input type="email" id="loginEmail" required placeholder="your@email.com" /></div>
+            <div class="form-group"><label>Пароль</label><input type="password" id="loginPassword" required placeholder="••••••••" /></div>
+            <button type="submit" class="btn btn-primary" style="width:100%;">Войти</button>
+            <div style="text-align:center;margin:15px 0;color:var(--text-muted);font-size:0.85rem;">или войти через</div>
+            <div class="oauth-btns">
+              <button type="button" class="oauth-btn google" onclick="oauthLogin('google')">
+                <svg viewBox="0 0 24 24" width="20" height="20"><path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92a5.06 5.06 0 0 1-2.2 3.32v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.1z" fill="#4285F4"/><path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/><path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/><path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/></svg>
+                Google
+              </button>
+              <button type="button" class="oauth-btn yandex" onclick="oauthLogin('yandex')">
+                <svg viewBox="0 0 24 24" width="20" height="20"><circle cx="12" cy="12" r="10" fill="#FF3333"/><path d="M14.5 17.5L10 7h2.5l2.5 6 2.5-6H20l-4.5 10.5h-2.5l2.5-6L14.5 17.5z" fill="white"/></svg>
+                Яндекс
+              </button>
+              <button type="button" class="oauth-btn vk" onclick="oauthLogin('vk')">
+                <svg viewBox="0 0 24 24" width="20" height="20"><path d="M12.785 16.241s.288-.032.436-.194c.136-.148.132-.427.132-.427s-.02-1.304.587-1.496c.598-.189 1.368 1.26 2.184 1.818.616.42 1.084.328 1.084.328l2.178-.03s1.14-.07.599-.964c-.044-.073-.314-.661-1.618-1.869-1.366-1.265-1.183-1.06.462-3.248.999-1.33 1.398-2.142 1.273-2.49-.12-.331-.857-.244-.857-.244l-2.454.015s-.182-.025-.317.056c-.132.079-.217.263-.217.263s-.39 1.038-.91 1.92c-1.098 1.863-1.537 1.963-1.716 1.846-.416-.272-.312-1.095-.312-1.68 0-1.822.276-2.582-.537-2.779-.27-.065-.468-.108-1.156-.115-.882-.009-1.628.003-2.05.21-.281.138-.498.445-.366.462.163.022.532.1.728.365.253.343.244 1.113.244 1.113s.145 2.142-.34 2.408c-.332.183-.788-.19-1.766-1.894-.502-.873-.881-1.836-.881-1.836s-.073-.18-.204-.277c-.158-.117-.38-.154-.38-.154l-2.335.015s-.35.01-.479.162c-.114.135-.009.414-.009.414s1.838 4.3 3.92 6.467c1.909 1.987 4.074 1.857 4.074 1.857h.982z" fill="#4C75A3"/></svg>
+                VK
+              </button>
+            </div>
+            <p style="text-align:center;color:var(--text-muted);margin-top:15px;font-size:0.9rem;">Демо-режим: введите любой email и пароль</p>
+          </form>
+          <form class="auth-form" id="registerForm" onsubmit="register(event)">
+            <div class="form-group"><label>Имя</label><input type="text" id="regName" required placeholder="Иван Иванов" /></div>
+            <div class="form-group"><label>Email</label><input type="email" id="regEmail" required placeholder="your@email.com" /></div>
+            <div class="form-group"><label>Пароль</label><input type="password" id="regPassword" required placeholder="••••••••" /></div>
+            <div class="form-group"><label>Подтвердите пароль</label><input type="password" id="regPassword2" required placeholder="••••••••" /></div>
+            <button type="submit" class="btn btn-primary" style="width:100%;">Зарегистрироваться</button>
+            <div style="text-align:center;margin:15px 0;color:var(--text-muted);font-size:0.85rem;">или через</div>
+            <div class="oauth-btns">
+              <button type="button" class="oauth-btn google" onclick="oauthRegister('google')">
+                <svg viewBox="0 0 24 24" width="20" height="20"><path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92a5.06 5.06 0 0 1-2.2 3.32v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.1z" fill="#4285F4"/><path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/><path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/><path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/></svg>
+                Google
+              </button>
+              <button type="button" class="oauth-btn yandex" onclick="oauthRegister('yandex')">
+                <svg viewBox="0 0 24 24" width="20" height="20"><circle cx="12" cy="12" r="10" fill="#FF3333"/><path d="M14.5 17.5L10 7h2.5l2.5 6 2.5-6H20l-4.5 10.5h-2.5l2.5-6L14.5 17.5z" fill="white"/></svg>
+                Яндекс
+              </button>
+              <button type="button" class="oauth-btn vk" onclick="oauthRegister('vk')">
+                <svg viewBox="0 0 24 24" width="20" height="20"><path d="M12.785 16.241s.288-.032.436-.194c.136-.148.132-.427.132-.427s-.02-1.304.587-1.496c.598-.189 1.368 1.26 2.184 1.818.616.42 1.084.328 1.084.328l2.178-.03s1.14-.07.599-.964c-.044-.073-.314-.661-1.618-1.869-1.366-1.265-1.183-1.06.462-3.248.999-1.33 1.398-2.142 1.273-2.49-.12-.331-.857-.244-.857-.244l-2.454.015s-.182-.025-.317.056c-.132.079-.217.263-.217.263s-.39 1.038-.91 1.92c-1.098 1.863-1.537 1.963-1.716 1.846-.416-.272-.312-1.095-.312-1.68 0-1.822.276-2.582-.537-2.779-.27-.065-.468-.108-1.156-.115-.882-.009-1.628.003-2.05.21-.281.138-.498.445-.366.462.163.022.532.1.728.365.253.343.244 1.113.244 1.113s.145 2.142-.34 2.408c-.332.183-.788-.19-1.766-1.894-.502-.873-.881-1.836-.881-1.836s-.073-.18-.204-.277c-.158-.117-.38-.154-.38-.154l-2.335.015s-.35.01-.479.162c-.114.135-.009.414-.009.414s1.838 4.3 3.92 6.467c1.909 1.987 4.074 1.857 4.074 1.857h.982z" fill="#4C75A3"/></svg>
+                VK
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+
+      <!-- Dashboard -->
+      <div class="auth-user" style="display:none;">
+        <div class="account-dashboard reveal">
+          <div class="account-sidebar">
+            <div class="account-avatar"><span class="account-name-display">U</span></div>
+            <div class="account-name account-name-display">Пользователь</div>
+            <div class="account-role">Сварщик</div>
+            <ul class="account-menu">
+              <li><a href="#" class="active" onclick="showAccountTab('overview');return false;">Обзор</a></li>
+              <li><a href="#" onclick="showAccountTab('history');return false;">История расчётов</a></li>
+              <li><a href="#" onclick="showAccountTab('favorites');return false;">Избранное</a></li>
+              <li><a href="#" onclick="showAccountTab('sync');return false;">Синхронизация</a></li>
+              <li><a href="#" onclick="logout();return false;">Выйти</a></li>
+            </ul>
+          </div>
+          <div class="account-content" id="accountContent">
+            <div id="tab-overview">
+              <h3>Обзор</h3>
+              <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:15px;margin-bottom:25px;">
+                <div class="card" style="padding:20px;text-align:center;"><div style="font-size:2rem;font-weight:900;color:var(--primary-light);" id="dash-calcs">0</div><div style="color:var(--text-muted);font-size:0.85rem;">Расчётов</div></div>
+                <div class="card" style="padding:20px;text-align:center;"><div style="font-size:2rem;font-weight:900;color:var(--primary-light);" id="dash-favs">0</div><div style="color:var(--text-muted);font-size:0.85rem;">В избранном</div></div>
+                <div class="card" style="padding:20px;text-align:center;"><div style="font-size:2rem;font-weight:900;color:var(--primary-light);" id="dash-since">2026</div><div style="color:var(--text-muted);font-size:0.85rem;">С нами с</div></div>
+              </div>
+              <p style="color:var(--text-muted);">Добро пожаловать в личный кабинет! Здесь вы можете управлять своими данными, синхронизировать их с приложением WELDPRO для Windows и просматривать историю.</p>
+            </div>
+            <div id="tab-history" style="display:none;">
+              <h3>История расчётов</h3>
+              <div id="accountHistory"></div>
+            </div>
+            <div id="tab-favorites" style="display:none;">
+              <h3>Избранное</h3>
+              <div id="accountFavorites"></div>
+            </div>
+            <div id="tab-sync" style="display:none;">
+              <h3>Синхронизация с приложением</h3>
+              <div style="margin-bottom:20px;"><span class="sync-status" id="syncStatus"><span style="width:8px;height:8px;border-radius:50%;background:#4CAF50;display:inline-block;"></span> Синхронизировано</span></div>
+              <p style="color:var(--text-muted);margin-bottom:20px;">Ваши данные автоматически синхронизируются между сайтом и Windows-приложением WELDPRO. Журнал работ, сметы, история расчётов и избранное всегда под рукой.</p>
+              <div class="data-row"><span class="data-label">Журнал сварочных работ</span><span class="data-val" id="sync-jobs">12 записей</span></div>
+              <div class="data-row"><span class="data-label">Созданные сметы</span><span class="data-val" id="sync-estimates">5 смет</span></div>
+              <div class="data-row"><span class="data-label">История расчётов</span><span class="data-val" id="sync-calcs">8 расчётов</span></div>
+              <div class="data-row"><span class="data-label">Избранное</span><span class="data-val" id="sync-favs">3 аппарата</span></div>
+              <button class="btn btn-outline" style="margin-top:20px;" onclick="alert('Синхронизация запущена...')">Синхронизировать вручную</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <footer class="footer">
+    <div class="footer-content">
+      <a href="index.html" class="footer-logo"><svg viewBox="0 0 24 24" width="28" height="28"><path d="M13 2 L4 14 L11 14 L9 22 L20 9 L13 9 Z" fill="url(#g-primary)"/></svg>WELD<span>PRO</span></a>
+      <div class="footer-links">
+        <a href="catalog.html">Каталог</a><a href="calculators.html">Калькуляторы</a><a href="wiki.html">База знаний</a><a href="account.html">Личный кабинет</a>
+      </div>
+    </div>
+    <div class="footer-bottom">&copy; 2026 WELDPRO. Все права защищены.</div>
+  </footer>
+
+  <button class="scroll-top" id="scrollTop" onclick="scrollToTop()"><svg viewBox="0 0 24 24"><path d="M12 19V5 M5 12l7-7 7 7" stroke="white" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+
+  <script src="js/app.js"></script>
+  <script>
+    function showAccountTab(tab) {
+      document.querySelectorAll('.account-menu a').forEach(a => a.classList.remove('active'));
+      event.target.classList.add('active');
+      document.querySelectorAll('[id^="tab-"]').forEach(el => el.style.display = 'none');
+      document.getElementById('tab-' + tab).style.display = 'block';
+      if (tab === 'history') renderAccountHistory();
+      if (tab === 'favorites') renderAccountFavorites();
+    }
+    function renderAccountHistory() {
+      const h = JSON.parse(localStorage.getItem('weldpro_calc_history') || '[]');
+      const el = document.getElementById('accountHistory');
+      if (h.length === 0) { el.innerHTML = '<p style="color:var(--text-muted);">История пуста. Перейдите в <a href="calculators.html" style="color:var(--primary-light);">калькуляторы</a>, чтобы сделать первый расчёт.</p>'; return; }
+      el.innerHTML = h.map(x => '<div class="calc-history-item"><span>' + x.info + '</span><span>' + x.date + '</span></div>').join('');
+      document.getElementById('dash-calcs').textContent = h.length;
+    }
+    function renderAccountFavorites() {
+      const favs = JSON.parse(localStorage.getItem('weldpro_fav') || '[]');
+      const el = document.getElementById('accountFavorites');
+      if (favs.length === 0) { el.innerHTML = '<p style="color:var(--text-muted);">Нет избранного. Перейдите в <a href="catalog.html" style="color:var(--primary-light);">каталог</a>, чтобы добавить аппараты.</p>'; return; }
+      document.getElementById('dash-favs').textContent = favs.length;
+      // Catalog data would need to be loaded here; showing IDs for demo
+      el.innerHTML = favs.map(id => '<div class="calc-history-item"><span>Аппарат ID: ' + id + '</span><a href="catalog.html" style="color:var(--primary-light);">Перейти</a></div>').join('');
+    }
+    // Init dashboard data
+    setTimeout(() => {
+      const h = JSON.parse(localStorage.getItem('weldpro_calc_history') || '[]');
+      document.getElementById('dash-calcs').textContent = h.length;
+      const f = JSON.parse(localStorage.getItem('weldpro_fav') || '[]');
+      document.getElementById('dash-favs').textContent = f.length;
+    }, 100);
+    
+    // === OAuth Login ===
+    function oauthLogin(provider) {
+      const providerNames = { google: 'Google', yandex: 'Яндекс', vk: 'VK' };
+      alert('OAuth вход через ' + providerNames[provider] + '\n\nВ реальном приложении здесь был бы редирект на страницу авторизации ' + providerNames[provider] + '.\n\nДля демо-режима: используйте форму входа с любым email и паролем.');
+    }
+    
+    function oauthRegister(provider) {
+      const providerNames = { google: 'Google', yandex: 'Яндекс', vk: 'VK' };
+      alert('OAuth регистрация через ' + providerNames[provider] + '\n\nВ реальном приложении здесь был бы редирект на страницу авторизации ' + providerNames[provider] + '.\n\nДля демо-режима: используйте форму регистрации.');
+    }
+  </script>
+</body>
+</html>

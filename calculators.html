@@ -1,0 +1,761 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Калькуляторы сварки — WELDPRO | Расчёт параметров, стоимости, норм</title>
+  <meta name="description" content="Бесплатные калькуляторы сварки: параметры MIG/MAG, TIG, MMA, стоимость работ, расход материалов, конвертер единиц, чек-лист качества шва." />
+  <meta name="keywords" content="калькулятор сварки, расчёт параметров сварки, стоимость сварки, нормы расхода, MIG, TIG, MMA" />
+  <link rel="manifest" href="manifest.json" />
+  <link rel="stylesheet" href="css/styles.css" />
+</head>
+<body>
+  <div class="loader" id="loader"><div class="loader-logo">WELDPRO</div><div class="loader-bar"><div class="loader-bar-fill"></div></div></div>
+  <div class="bg-anim"></div>
+  <div class="sparks" id="sparks"></div>
+
+  <nav class="navbar" id="navbar">
+    <a href="index.html" class="nav-logo">
+      <div class="nav-logo-icon"><svg viewBox="0 0 24 24" width="28" height="28"><path d="M13 2 L4 14 L11 14 L9 22 L20 9 L13 9 Z" fill="url(#g-primary)"/></svg></div>
+      WELD<span>PRO</span>
+    </a>
+    <ul class="nav-links" id="navLinks">
+      <li><a href="index.html">Главная</a></li>
+      <li><a href="catalog.html">Каталог</a></li>
+      <li><a href="calculators.html" class="active">Калькуляторы</a></li>
+      <li><a href="wiki.html">База знаний</a></li>
+      <li><a href="account.html">Личный кабинет</a></li>
+    </ul>
+    <div class="nav-right">
+      <button class="theme-btn" onclick="toggleTheme()"><svg viewBox="0 0 24 24" width="20" height="20"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z" fill="currentColor"/></svg></button>
+      <div class="burger" id="burger" onclick="toggleBurger()"><span></span><span></span><span></span></div>
+    </div>
+  </nav>
+
+  <section class="section" style="padding-top:120px;">
+    <div class="container">
+      <div class="section-header reveal">
+        <div class="section-tag"><svg viewBox="0 0 24 24" width="14" height="14"><path d="M5 3h14v18H5z M9 7h6 M9 11h6 M9 15h4" stroke="url(#g-primary)" stroke-width="2" fill="none" stroke-linecap="round"/></svg>Калькуляторы</div>
+        <h1 class="section-title">Инструменты расчёта</h1>
+        <p class="section-desc">Рассчитывайте параметры сварки, стоимость работ, нормы расхода и экспортируйте отчёты в PDF и Excel.</p>
+      </div>
+
+      <!-- Welding Parameters Calculator -->
+      <div class="tool-card reveal" style="margin-bottom:40px;">
+        <h3 style="font-size:1.4rem;font-weight:700;margin-bottom:20px;">Калькулятор параметров сварки</h3>
+        <div class="form-group"><label>Метод сварки</label><select id="calc-method"><option value="mig">MIG/MAG (полуавтомат)</option><option value="tig">TIG (аргон)</option><option value="mma">MMA (ручная дуговая)</option></select></div>
+        <div class="form-group"><label>Материал</label><select id="calc-material"><option value="steel">Углеродистая сталь</option><option value="stainless">Нержавеющая сталь</option><option value="aluminum">Алюминий</option><option value="titanium">Титан</option></select></div>
+        <div class="form-group"><label>Тип соединения (ГОСТ)</label><select id="calc-gost" onchange="updateWeldDiagram()"><option value="gost5264">ГОСТ 5264-80 (стыковой, ручная дуговая)</option><option value="gost14771">ГОСТ 14771-76 (стыковой, полуавтомат)</option></select></div>
+        <div style="display:flex;gap:15px;flex-wrap:wrap;">
+          <div class="form-group" style="flex:1;min-width:150px;"><label>Толщина (мм)</label><input type="number" id="calc-thickness" value="3" min="0.5" max="50" step="0.5" oninput="updateWeldDiagram()" /></div>
+          <div class="form-group" style="flex:1;min-width:150px;"><label>Длина шва (м)</label><input type="number" id="calc-length" value="1" min="0.1" step="0.1" /></div>
+        </div>
+        <div style="display:flex;gap:10px;flex-wrap:wrap;">
+          <button class="btn btn-primary" style="flex:1;" onclick="calcWelding()">Рассчитать</button>
+          <button class="btn btn-outline" onclick="printCalc()">Печать</button>
+        </div>
+        <div class="results" id="calc-results">
+          <h4 style="margin-bottom:12px;">Результаты расчёта</h4>
+          <div id="calcResultsContent">
+            <div class="result-row"><span class="result-label">Сила тока</span><span class="result-val" id="r-current">-</span></div>
+            <div class="result-row"><span class="result-label">Диаметр</span><span class="result-val" id="r-diameter">-</span></div>
+            <div class="result-row"><span class="result-label">Расход газа</span><span class="result-val" id="r-gas">-</span></div>
+            <div class="result-row"><span class="result-label">Напряжение</span><span class="result-val" id="r-voltage">-</span></div>
+            <div class="result-row"><span class="result-label">Скорость</span><span class="result-val" id="r-speed">-</span></div>
+            <div class="result-row"><span class="result-label">Проволока</span><span class="result-val" id="r-wire">-</span></div>
+            <div class="result-row"><span class="result-label">Время</span><span class="result-val" id="r-time">-</span></div>
+          </div>
+          <div class="export-btns">
+            <button class="export-btn pdf" onclick="exportToPDF('Технологическая карта сварки','calcResultsContent')">Экспорт PDF</button>
+            <button class="export-btn excel" onclick="exportToExcel('Параметры сварки','calcResultsContent')">Экспорт Excel</button>
+            <button class="export-btn pdf" onclick="exportWPS()" title="Официальный бланк по нормам НАКС">Экспорт WPS-карты (НАКС)</button>
+          </div>
+        </div>
+        <div style="margin-top:15px;"><h4 style="margin-bottom:10px;">История расчётов</h4><div id="calcHistory"></div></div>
+      </div>
+
+      <!-- Interactive Weld SVG Drawing -->
+      <div class="tool-card reveal" style="margin-bottom:40px;">
+        <h3 style="font-size:1.4rem;font-weight:700;margin-bottom:20px;">Интерактивный чертёж сварного шва</h3>
+        <p style="color:var(--text-muted);margin-bottom:20px;">Выберите толщину металла и тип ГОСТ — чертёж динамически изменит геометрию разделки кромок, зазор и угол скоса.</p>
+        <div style="display:flex;gap:15px;flex-wrap:wrap;">
+          <div class="form-group" style="flex:1;min-width:160px;">
+            <label>Толщина металла (мм)</label>
+            <input type="number" id="svg-thickness" value="3" min="1" max="50" step="0.5" oninput="updateWeldSVG()" />
+          </div>
+          <div class="form-group" style="flex:1;min-width:220px;">
+            <label>Тип соединения (ГОСТ)</label>
+            <select id="svg-gost" onchange="updateWeldSVG()">
+              <option value="5264">ГОСТ 5264-80 (ручная дуговая MMA)</option>
+              <option value="14771">ГОСТ 14771-76 (в защитном газе MIG/MAG)</option>
+            </select>
+          </div>
+        </div>
+        <div class="weld-svg-wrap" style="background:var(--card);border:1px solid var(--border);border-radius:12px;padding:20px;margin-top:10px;">
+          <svg id="weldSVG" viewBox="0 0 460 280" width="100%" height="auto" style="display:block;max-width:640px;margin:0 auto;"></svg>
+        </div>
+        <div class="results" style="margin-top:15px;">
+          <div id="weldSVGInfo">
+            <div class="result-row"><span class="result-label">Тип разделки</span><span class="result-val" id="svg-bevel-type">-</span></div>
+            <div class="result-row"><span class="result-label">Зазор (b)</span><span class="result-val" id="svg-gap">-</span></div>
+            <div class="result-row"><span class="result-label">Угол скоса</span><span class="result-val" id="svg-angle">-</span></div>
+            <div class="result-row"><span class="result-label">Притупление</span><span class="result-val" id="svg-root">-</span></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Cost Calculator -->
+      <div class="tool-card reveal" style="margin-bottom:40px;">
+        <h3 style="font-size:1.4rem;font-weight:700;margin-bottom:20px;">Калькулятор стоимости работ</h3>
+        <div class="form-group"><label>Метод</label><select id="cost-method"><option value="mig">MIG/MAG</option><option value="tig">TIG</option><option value="mma">MMA</option></select></div>
+        <div class="form-group"><label>Материал</label><select id="cost-material"><option value="steel">Сталь</option><option value="stainless">Нержавейка</option><option value="aluminum">Алюминий</option></select></div>
+        <div style="display:flex;gap:15px;flex-wrap:wrap;">
+          <div class="form-group" style="flex:1;min-width:150px;"><label>Толщина (мм)</label><input type="number" id="cost-thickness" value="3" min="0.5" step="0.5" /></div>
+          <div class="form-group" style="flex:1;min-width:150px;"><label>Длина шва (м)</label><input type="number" id="cost-length" value="1" min="0.1" step="0.1" /></div>
+        </div>
+        <div class="form-group"><label>Ставка за час (₽)</label><input type="number" id="cost-rate" value="1000" /></div>
+        <button class="btn btn-primary" style="width:100%;margin-bottom:10px;" onclick="calcCost()">Рассчитать стоимость</button>
+        <div class="results" id="cost-results" style="display:none;">
+          <h4 style="margin-bottom:12px;">Итоговая стоимость</h4>
+          <div id="costResultsContent">
+            <div class="result-row"><span class="result-label">Проволока</span><span class="result-val" id="c-wire">-</span></div>
+            <div class="result-row"><span class="result-label">Газ</span><span class="result-val" id="c-gas">-</span></div>
+            <div class="result-row"><span class="result-label">Работа</span><span class="result-val" id="c-labor">-</span></div>
+            <div class="result-row"><span class="result-label" style="font-weight:700;color:var(--text);">ИТОГО</span><span class="result-val" id="c-total" style="font-size:1.4rem;">-</span></div>
+          </div>
+          <div class="export-btns">
+            <button class="export-btn pdf" onclick="exportToPDF('Смета сварочных работ','costResultsContent')">Экспорт PDF</button>
+            <button class="export-btn excel" onclick="exportToExcel('Смета сварки','costResultsContent')">Экспорт Excel</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Equipment Wizard -->
+      <div class="tool-card reveal" style="margin-bottom:40px;">
+        <h3 style="font-size:1.4rem;font-weight:700;margin-bottom:20px;">Подбор оборудования</h3>
+        <div class="wizard">
+          <div class="wizard-step active" id="wStep0">
+            <h4 style="margin-bottom:15px;">Шаг 1: Тип задач</h4>
+            <div class="wizard-grid cols-2">
+              <button class="wizard-opt" data-q="task" data-v="home"><svg viewBox="0 0 24 24"><path d="M3 11l9-8 9 8 M5 9v11h14V9" stroke="url(#g-primary)" stroke-width="2" fill="none" stroke-linecap="round"/></svg>Бытовые</button>
+              <button class="wizard-opt" data-q="task" data-v="auto"><svg viewBox="0 0 24 24"><path d="M5 11l1.5-4.5h11L19 11 M4 11h16v6h-2 M6 17H4v-6 M20 17h-2v-6" stroke="url(#g-blue)" stroke-width="2" fill="none" stroke-linecap="round"/></svg>Авторемонт</button>
+              <button class="wizard-opt" data-q="task" data-v="production"><svg viewBox="0 0 24 24"><path d="M3 21h18 M5 21V8l7-5 7 5v13 M9 21v-6h6v6" stroke="url(#g-green)" stroke-width="2" fill="none" stroke-linecap="round"/></svg>Производство</button>
+              <button class="wizard-opt" data-q="task" data-v="construction"><svg viewBox="0 0 24 24"><path d="M4 20h16 M6 20V9l6-5 6 5v11 M10 20v-4h4v4" stroke="url(#g-amber)" stroke-width="2" fill="none" stroke-linecap="round"/></svg>Стройка</button>
+            </div>
+          </div>
+          <div class="wizard-step" id="wStep1">
+            <h4 style="margin-bottom:15px;">Шаг 2: Бюджет</h4>
+            <div class="wizard-grid cols-3">
+              <button class="wizard-opt" data-q="budget" data-v="low">До 20к ₽</button>
+              <button class="wizard-opt" data-q="budget" data-v="mid">20-60к ₽</button>
+              <button class="wizard-opt" data-q="budget" data-v="high">60к+ ₽</button>
+            </div>
+          </div>
+          <div class="wizard-step" id="wStep2">
+            <h4 style="margin-bottom:15px;">Шаг 3: Материал</h4>
+            <div class="wizard-grid cols-2">
+              <button class="wizard-opt" data-q="material" data-v="steel">Сталь</button>
+              <button class="wizard-opt" data-q="material" data-v="stainless">Нержавейка</button>
+              <button class="wizard-opt" data-q="material" data-v="aluminum">Алюминий</button>
+              <button class="wizard-opt" data-q="material" data-v="mixed">Разные</button>
+            </div>
+          </div>
+          <div class="wizard-step" id="wStep3">
+            <h4 style="margin-bottom:15px;">Шаг 4: Опыт</h4>
+            <div class="wizard-grid cols-3">
+              <button class="wizard-opt" data-q="experience" data-v="beginner">Новичок</button>
+              <button class="wizard-opt" data-q="experience" data-v="intermediate">Средний</button>
+              <button class="wizard-opt" data-q="experience" data-v="pro">Профи</button>
+            </div>
+          </div>
+          <div class="wizard-step" id="wStep4"><div id="wizardResult"></div></div>
+          <div class="wizard-nav">
+            <button class="btn btn-outline" id="wPrev" onclick="wizardPrev()" style="display:none;">Назад</button>
+            <button class="btn btn-primary" id="wNext" onclick="wizardNext()">Далее</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Consumables -->
+      <div class="tool-card reveal" style="margin-bottom:40px;">
+        <h3 style="font-size:1.4rem;font-weight:700;margin-bottom:20px;">Подбор расходных материалов</h3>
+        <div style="display:flex;gap:15px;flex-wrap:wrap;">
+          <div class="form-group" style="flex:1;min-width:200px;"><label>Материал</label><select id="con-material" onchange="renderConsumables()"><option value="steel">Углеродистая сталь</option><option value="stainless">Нержавеющая сталь</option><option value="aluminum">Алюминий</option><option value="titanium">Титан</option><option value="copper">Медь</option></select></div>
+          <div class="form-group" style="flex:1;min-width:200px;"><label>Толщина (мм)</label><select id="con-thickness" onchange="renderConsumables()"><option value="1">1 мм</option><option value="2">2 мм</option><option value="3">3 мм</option><option value="5">5 мм</option><option value="8">8 мм</option><option value="12">12 мм</option><option value="20">20 мм</option></select></div>
+        </div>
+        <div class="consumables-grid" id="consumablesGrid"></div>
+      </div>
+
+      <!-- Norms -->
+      <div class="tool-card reveal" style="margin-bottom:40px;max-width:900px;">
+        <h3 style="font-size:1.4rem;font-weight:700;margin-bottom:20px;">Нормы расхода на 1 метр шва</h3>
+        <table class="norm-table" id="normTable"></table>
+      </div>
+
+      <!-- Converter -->
+      <div class="tool-card reveal" style="margin-bottom:40px;">
+        <h3 style="font-size:1.4rem;font-weight:700;margin-bottom:20px;">Конвертер единиц</h3>
+        <div class="conv-tabs">
+          <button class="conv-tab active" onclick="setConvTab('length',this)"><svg viewBox="0 0 24 24"><path d="M3 12h18 M9 6l-6 6 6 6 M15 6l6 6-6 6" stroke="url(#g-primary)" stroke-width="2" fill="none" stroke-linecap="round"/></svg>Длина</button>
+          <button class="conv-tab" onclick="setConvTab('weight',this)"><svg viewBox="0 0 24 24"><path d="M12 3a2 2 0 0 1 2 2c0 .4-.1.7-.3 1H16a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h2.3A2 2 0 0 1 10 5a2 2 0 0 1 2-2z" stroke="url(#g-green)" stroke-width="2" fill="none"/></svg>Вес</button>
+          <button class="conv-tab" onclick="setConvTab('pressure',this)"><svg viewBox="0 0 24 24"><path d="M12 3v3 M12 12v3 M5 6a10 10 0 0 0 0 12 M19 6a10 10 0 0 1 0 12" stroke="url(#g-blue)" stroke-width="2" fill="none" stroke-linecap="round"/></svg>Давление</button>
+          <button class="conv-tab" onclick="setConvTab('temp',this)"><svg viewBox="0 0 24 24"><path d="M14 14.8V5a2 2 0 0 0-4 0v9.8a4 4 0 1 0 4 0z M12 9v6" stroke="url(#g-amber)" stroke-width="2" fill="none" stroke-linecap="round"/></svg>Температура</button>
+        </div>
+        <div class="conv-row">
+          <input type="number" id="convInput" value="1" oninput="convert()" />
+          <select id="convFrom" onchange="convert()"></select>
+          <span style="color:var(--text-muted);">&#8594;</span>
+          <select id="convTo" onchange="convert()"></select>
+        </div>
+        <div class="results" id="convResult" style="display:block;">
+          <div class="result-row"><span class="result-label">Результат</span><span class="result-val" id="convOut" style="font-size:1.2rem;">-</span></div>
+        </div>
+      </div>
+
+      <!-- XLSX Spec Import -->
+      <div class="tool-card reveal" style="margin-bottom:40px;">
+        <h3 style="font-size:1.4rem;font-weight:700;margin-bottom:20px;">Загрузка спецификации .xlsx</h3>
+        <p style="color:var(--text-muted);margin-bottom:20px;">Загрузите таблицу с параметрами швов (колонки: Длина, Толщина, Металл). Система рассчитает расход материалов по жёстким формулам.</p>
+        <div class="form-group">
+          <label>Файл спецификации (.xlsx, .xls)</label>
+          <input type="file" id="xlsxFileInput" accept=".xlsx,.xls" style="display:none;" onchange="handleXlsxUpload(event)" />
+          <button class="btn btn-primary" onclick="document.getElementById('xlsxFileInput').click()">
+            <svg viewBox="0 0 24 24" width="18" height="18"><path d="M12 3v12 M7 10l5 5 5-5 M4 20h16" stroke="white" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            Загрузить .xlsx файл
+          </button>
+        </div>
+        <div id="xlsxPreview" style="display:none;margin-top:20px;">
+          <h4 style="margin-bottom:10px;">Предпросмотр данных</h4>
+          <div style="overflow-x:auto;"><table class="norm-table" id="xlsxTable"></table></div>
+          <div class="results" style="margin-top:20px;">
+            <h4 style="margin-bottom:12px;">Итоговый расчёт</h4>
+            <div id="xlsxResultsContent">
+              <div class="result-row"><span class="result-label">Всего швов</span><span class="result-val" id="xlsx-shov-count">-</span></div>
+              <div class="result-row"><span class="result-label">Проволока (суммарно)</span><span class="result-val" id="xlsx-wire-total" style="color:var(--primary-light);font-size:1.2rem;">-</span></div>
+              <div class="result-row"><span class="result-label">Газ (суммарно)</span><span class="result-val" id="xlsx-gas-total" style="color:var(--primary-light);font-size:1.2rem;">-</span></div>
+              <div class="result-row"><span class="result-label">Общая длина швов</span><span class="result-val" id="xlsx-length-total" style="color:var(--primary-light);font-size:1.2rem;">-</span></div>
+            </div>
+            <div class="export-btns">
+              <button class="export-btn pdf" onclick="exportXlsxPDF()">Экспорт PDF</button>
+              <button class="export-btn excel" onclick="exportXlsxResult()">Экспорт Excel</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Checklist -->
+      <div class="tool-card reveal" style="max-width:760px;margin-bottom:40px;">
+        <h3 style="font-size:1.4rem;font-weight:700;margin-bottom:10px;">Чек-лист проверки качества шва</h3>
+        <p style="color:var(--text-muted);margin-bottom:20px;">Отметьте каждый критерий как «Прошёл» или «Не прошёл».</p>
+        <div id="checklistItems"></div>
+        <div class="results" id="checklistResult" style="margin-top:20px;display:none;">
+          <h4 style="margin-bottom:10px;">Результат проверки</h4>
+          <div id="checklistResultsContent">
+            <div class="result-row"><span class="result-label">Всего</span><span class="result-val" id="cl-total">0</span></div>
+            <div class="result-row"><span class="result-label">Прошло</span><span class="result-val" id="cl-pass" style="color:#4CAF50;">0</span></div>
+            <div class="result-row"><span class="result-label">Не прошло</span><span class="result-val" id="cl-fail" style="color:#f44336;">0</span></div>
+            <div class="result-row"><span class="result-label">Итог</span><span class="result-val" id="cl-verdict">-</span></div>
+          </div>
+          <div class="export-btns">
+            <button class="export-btn pdf" onclick="exportToPDF('Чек-лист качества шва','checklistResultsContent')">Экспорт PDF</button>
+            <button class="export-btn excel" onclick="exportToExcel('Чек-лист','checklistResultsContent')">Экспорт Excel</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <footer class="footer">
+    <div class="footer-content">
+      <a href="index.html" class="footer-logo"><svg viewBox="0 0 24 24" width="28" height="28"><path d="M13 2 L4 14 L11 14 L9 22 L20 9 L13 9 Z" fill="url(#g-primary)"/></svg>WELD<span>PRO</span></a>
+      <div class="footer-links">
+        <a href="catalog.html">Каталог</a><a href="calculators.html">Калькуляторы</a><a href="wiki.html">База знаний</a><a href="account.html">Личный кабинет</a>
+      </div>
+    </div>
+    <div class="footer-bottom">&copy; 2026 WELDPRO. Все права защищены.</div>
+  </footer>
+
+  <div class="modal-overlay" id="modalOverlay" onclick="if(event.target===this)closeModal()">
+    <div class="modal"><button class="modal-close" onclick="closeModal()">&#10005;</button><div id="modalBody"></div></div>
+  </div>
+  <button class="scroll-top" id="scrollTop" onclick="scrollToTop()"><svg viewBox="0 0 24 24"><path d="M12 19V5 M5 12l7-7 7 7" stroke="white" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+
+  <script src="js/app.js"></script>
+  <script>
+    // === Calculator ===
+    let lastCalc = null;
+    function calcWelding() {
+      const m = document.getElementById('calc-method').value;
+      const mat = document.getElementById('calc-material').value;
+      const t = parseFloat(document.getElementById('calc-thickness').value);
+      const L = parseFloat(document.getElementById('calc-length').value);
+      const matMult = mat === 'aluminum' ? 1.3 : mat === 'titanium' ? 1.2 : mat === 'stainless' ? 1.1 : 1.0;
+      let cur, dia, gas, vol, speed, wire, time;
+      if (m === 'mig') { cur = Math.round(t * 40 * matMult); dia = t <= 1 ? 0.6 : t <= 3 ? 0.8 : t <= 6 ? 1.0 : 1.2; gas = mat === 'aluminum' ? '10-15 л/мин (Ar)' : '8-12 л/мин (Ar/CO2)'; vol = Math.round(t * 2 + 14); speed = (cur / 100).toFixed(1); wire = (cur * 0.002 * L).toFixed(2); time = Math.round(L / speed * 60); }
+      else if (m === 'tig') { cur = Math.round(t * 30 * matMult); dia = t <= 2 ? 1.6 : t <= 5 ? 2.4 : 3.2; gas = mat === 'aluminum' ? '12-18 л/мин (Ar, AC)' : '6-10 л/мин (Ar)'; vol = Math.round(t * 1.5 + 10); speed = (cur / 150).toFixed(2); wire = (cur * 0.0015 * L).toFixed(2); time = Math.round(L / speed * 60); }
+      else { cur = Math.round(t * 35 * matMult); dia = t <= 3 ? 2.5 : t <= 5 ? 3.2 : t <= 8 ? 4.0 : 5.0; gas = 'не требуется'; vol = Math.round(t * 1.8 + 16); speed = (cur / 200).toFixed(2); wire = (cur * 0.0025 * L).toFixed(2); time = Math.round(L / speed * 60); }
+      document.getElementById('r-current').textContent = cur + ' A';
+      document.getElementById('r-diameter').textContent = dia + ' мм';
+      document.getElementById('r-gas').textContent = gas;
+      document.getElementById('r-voltage').textContent = vol + ' V';
+      document.getElementById('r-speed').textContent = speed + ' м/мин';
+      document.getElementById('r-wire').textContent = wire + ' кг';
+      document.getElementById('r-time').textContent = time + ' мин';
+      document.getElementById('calc-results').style.display = 'block';
+      lastCalc = { method: m, material: mat, thickness: t, current: cur, length: L, diameter: dia, gas: gas, voltage: vol, speed: speed, wire: wire, time: time, gost: document.getElementById('calc-gost').value === 'gost5264' ? 'ГОСТ 5264-80' : 'ГОСТ 14771-76' };
+      saveCalcHistory();
+    }
+    function saveCalcHistory() {
+      const h = JSON.parse(localStorage.getItem('weldpro_calc_history') || '[]');
+      h.unshift({ info: lastCalc.method.toUpperCase() + ' ' + lastCalc.thickness + 'мм -> ' + lastCalc.current + 'A', date: new Date().toLocaleDateString('ru-RU') });
+      if (h.length > 8) h.length = 8;
+      localStorage.setItem('weldpro_calc_history', JSON.stringify(h));
+      renderCalcHistory();
+    }
+    function renderCalcHistory() {
+      const h = JSON.parse(localStorage.getItem('weldpro_calc_history') || '[]');
+      const el = document.getElementById('calcHistory');
+      if (h.length === 0) { el.innerHTML = '<p style="color:var(--text-muted);">История пуста</p>'; return; }
+      el.innerHTML = h.map(x => '<div class="calc-history-item"><span>' + x.info + '</span><span>' + x.date + '</span></div>').join('');
+    }
+    function printCalc() { if (!lastCalc) { alert('Сначала рассчитайте!'); return; } window.print(); }
+
+    // === WPS Export (НАКС бланк) ===
+    function exportWPS() {
+      if (!lastCalc) { alert('Сначала выполните расчёт параметров сварки!'); return; }
+      const c = lastCalc;
+      const methodLabel = c.method === 'mig' ? 'MIG/MAG (РДС в защитных газах)' : c.method === 'tig' ? 'TIG (аргонодуговая)' : 'ММА (ручная дуговая)';
+      const matLabel = { steel: 'Углеродистая сталь', stainless: 'Нержавеющая сталь', aluminum: 'Алюминий', titanium: 'Титан' }[c.material] || c.material;
+      const gostLabel = c.gost === '14771' ? 'ГОСТ 14771-76' : 'ГОСТ 5264-80';
+      const wpsNum = 'WPS-' + new Date().getFullYear() + '-' + String(Math.floor(Math.random() * 900) + 100);
+      const win = window.open('', '_blank');
+      win.document.write(`
+        <html><head><meta charset="UTF-8"><title>Технологическая карта сварки ${wpsNum}</title>
+        <style>
+          @page { size: A4; margin: 12mm; }
+          body { font-family: Arial, sans-serif; color: #111; font-size: 11px; line-height: 1.4; }
+          h1 { font-size: 15px; text-align: center; margin: 4px 0 2px; }
+          .sub { text-align: center; font-size: 11px; margin-bottom: 10px; }
+          table { width: 100%; border-collapse: collapse; margin-bottom: 8px; }
+          td, th { border: 1px solid #000; padding: 4px 6px; vertical-align: top; }
+          th { background: #eee; font-size: 10px; }
+          .lbl { background: #f5f5f5; width: 28%; font-weight: bold; }
+          .head-row td { font-size: 10px; }
+          .sign-table td { height: 34px; }
+          .stamp { border: 2px solid #000; padding: 6px; text-align: center; font-weight: bold; margin-bottom: 8px; }
+          .small { font-size: 9px; color: #444; }
+        </style></head>
+        <body>
+          <div class="stamp">ТЕХНОЛОГИЧЕСКАЯ КАРТА СВАРКИ (WPS)<br/>по нормам НАКС / РД 03-615-03</div>
+          <table class="head-row">
+            <tr>
+              <td class="lbl">№ карты</td><td>${wpsNum}</td>
+              <td class="lbl">Дата разработки</td><td>${new Date().toLocaleDateString('ru-RU')}</td>
+            </tr>
+            <tr>
+              <td class="lbl">Организация</td><td colspan="3">______________________________</td>
+            </tr>
+          </table>
+
+          <h1>1. ОСНОВНЫЕ ПАРАМЕТРЫ СВАРКИ</h1>
+          <table>
+            <tr><td class="lbl">Способ сварки</td><td>${methodLabel}</td></tr>
+            <tr><td class="lbl">Тип соединения / ГОСТ</td><td>Стыковое, ${gostLabel}</td></tr>
+            <tr><td class="lbl">Основной металл</td><td>${matLabel}, толщина S = ${c.thickness} мм</td></tr>
+            <tr><td class="lbl">Длина шва</td><td>${c.length} м</td></tr>
+            <tr><td class="lbl">Пространственное положение</td><td>Нижнее</td></tr>
+          </table>
+
+          <h1>2. РЕЖИМЫ СВАРКИ</h1>
+          <table>
+            <tr><th>Параметр</th><th>Значение</th><th>Примечание</th></tr>
+            <tr><td>Сварочный ток, А</td><td>${c.current}</td><td>Постоянный / переменный по методу</td></tr>
+            <tr><td>Напряжение дуги, В</td><td>${c.voltage}</td><td>—</td></tr>
+            <tr><td>Диаметр электрода/проволоки, мм</td><td>${c.diameter}</td><td>—</td></tr>
+            <tr><td>Скорость сварки, м/мин</td><td>${c.speed}</td><td>—</td></tr>
+            <tr><td>Защитный газ</td><td>${c.gas}</td><td>—</td></tr>
+            <tr><td>Расход присадочного материала, кг</td><td>${c.wire}</td><td>На всю длину шва</td></tr>
+            <tr><td>Ориентировочное время, мин</td><td>${c.time}</td><td>—</td></tr>
+          </table>
+
+          <h1>3. ТРЕБОВАНИЯ К ПОДГОТОВКЕ И ТЕХНОЛОГИИ</h1>
+          <table>
+            <tr><td class="lbl">Подготовка кромок</td><td>Зачистка до металлического блеска на 20 мм от кромки; разделка по ${gostLabel}</td></tr>
+            <tr><td class="lbl">Предварительный подогрев</td><td>${c.thickness >= 20 ? 'Да, 100–200 °C' : 'Не требуется'}</td></tr>
+            <tr><td class="lbl">Межпроходная температура</td><td>Не более 250 °C</td></tr>
+            <tr><td class="lbl">Термообработка после сварки</td><td>${c.thickness >= 20 ? 'Рекомендуется отпуск' : 'Не требуется'}</td></tr>
+            <tr><td class="lbl">Контроль качества</td><td>ВИК 100%; по проекту — УЗК/РК</td></tr>
+          </table>
+
+          <h1>4. ПОДПИСИ</h1>
+          <table class="sign-table">
+            <tr>
+              <td class="lbl">Разработал (сварщик-технолог)</td>
+              <td>____________ / ________________</td>
+            </tr>
+            <tr>
+              <td class="lbl">Проверил (инженер по сварке, НАКС ур. 2)</td>
+              <td>____________ / ________________</td>
+            </tr>
+            <tr>
+              <td class="lbl">Утвердил (главный инженер)</td>
+              <td>____________ / ________________</td>
+            </tr>
+          </table>
+          <p class="small">Карта сформирована автоматически в WELDPRO на основе расчёта от ${new Date().toLocaleString('ru-RU')}. Значения являются расчётно-рекомендательными и подлежат корректировке при аттестации технологии.</p>
+        </body></html>
+      `);
+      win.document.close();
+      setTimeout(() => win.print(), 500);
+    }
+
+    // === Interactive Seam Drawing (SVG) ===
+    function seamDimLine(x1, y1, x2, y2) {
+      return '<line x1="' + x1 + '" y1="' + y1 + '" x2="' + x2 + '" y2="' + y2 + '" stroke="#FFC107" stroke-width="1.2"/>' +
+        '<circle cx="' + x1 + '" cy="' + y1 + '" r="2.5" fill="#FFC107"/><circle cx="' + x2 + '" cy="' + y2 + '" r="2.5" fill="#FFC107"/>';
+    }
+    function updateWeldSVG() {
+      const t = parseFloat(document.getElementById('svg-thickness').value) || 3;
+      const gost = document.getElementById('svg-gost').value;
+      let gap, bevelAngle = 0, rootFace = 0, needBevel = false;
+      if (gost === '5264') {
+        // ГОСТ 5264-80: ручная дуговая сварка, скос кромок от 4 мм
+        needBevel = t >= 4;
+        bevelAngle = needBevel ? 30 : 0;
+        rootFace = needBevel ? 2 : 0;
+        gap = Math.min(3, Math.max(1, Math.round(t * 0.25 * 2) / 2));
+      } else {
+        // ГОСТ 14771-76: сварка в защитных газах, скос от 6 мм, меньший зазор
+        needBevel = t >= 6;
+        bevelAngle = needBevel ? 25 : 0;
+        rootFace = needBevel ? 1.5 : 0;
+        gap = Math.min(2, Math.max(0.5, Math.round(t * 0.15 * 2) / 2));
+      }
+      const W = 600, H = 320;
+      const scale = Math.min(8, 150 / t);
+      const plateH = Math.max(t * scale, 12);
+      const topY = (H - plateH) / 2;
+      const botY = topY + plateH;
+      const cx = W / 2;
+      const gapPx = Math.max(gap * scale, 6);
+      const rootFacePx = rootFace * scale;
+      const bevelOffset = needBevel ? Math.tan(bevelAngle * Math.PI / 180) * (plateH - rootFacePx) : 0;
+      const leftX = 60, rightX = W - 60;
+      let leftPts, rightPts;
+      if (needBevel) {
+        leftPts = leftX + ',' + topY + ' ' + (cx - gapPx / 2 + bevelOffset) + ',' + topY + ' ' + (cx - gapPx / 2) + ',' + (topY + plateH - rootFacePx) + ' ' + (cx - gapPx / 2) + ',' + botY + ' ' + leftX + ',' + botY;
+        rightPts = rightX + ',' + topY + ' ' + (cx + gapPx / 2 - bevelOffset) + ',' + topY + ' ' + (cx + gapPx / 2) + ',' + (topY + plateH - rootFacePx) + ' ' + (cx + gapPx / 2) + ',' + botY + ' ' + rightX + ',' + botY;
+      } else {
+        leftPts = leftX + ',' + topY + ' ' + (cx - gapPx / 2) + ',' + topY + ' ' + (cx - gapPx / 2) + ',' + botY + ' ' + leftX + ',' + botY;
+        rightPts = rightX + ',' + topY + ' ' + (cx + gapPx / 2) + ',' + topY + ' ' + (cx + gapPx / 2) + ',' + botY + ' ' + rightX + ',' + botY;
+      }
+      let s = '';
+      // Plates
+      s += '<polygon points="' + leftPts + '" fill="#2a2a2a" stroke="#555" stroke-width="1.5"/>';
+      s += '<polygon points="' + rightPts + '" fill="#2a2a2a" stroke="#555" stroke-width="1.5"/>';
+      // Weld metal in groove
+      if (needBevel) {
+        const capH = Math.min(10, 4 + t * 0.1);
+        s += '<polygon points="' + (cx - gapPx / 2 + bevelOffset) + ',' + topY + ' ' + (cx - gapPx / 2) + ',' + (topY + plateH - rootFacePx) + ' ' + (cx + gapPx / 2) + ',' + (topY + plateH - rootFacePx) + ' ' + (cx + gapPx / 2 - bevelOffset) + ',' + topY + '" fill="url(#g-primary)" opacity="0.75"/>';
+        s += '<path d="M ' + (cx - gapPx / 2 + bevelOffset) + ' ' + topY + ' Q ' + cx + ' ' + (topY - capH * 2) + ' ' + (cx + gapPx / 2 - bevelOffset) + ' ' + topY + ' Z" fill="url(#g-primary)" opacity="0.9"/>';
+      } else {
+        s += '<path d="M ' + (cx - gapPx / 2) + ' ' + topY + ' Q ' + cx + ' ' + (topY - 16) + ' ' + (cx + gapPx / 2) + ' ' + topY + ' L ' + (cx + gapPx / 2) + ' ' + botY + ' L ' + (cx - gapPx / 2) + ' ' + botY + ' Z" fill="url(#g-primary)" opacity="0.8"/>';
+      }
+      // Gap dimension
+      const gapDimY = botY + 22;
+      s += '<line x1="' + (cx - gapPx / 2) + '" y1="' + botY + '" x2="' + (cx - gapPx / 2) + '" y2="' + (gapDimY + 4) + '" stroke="#FFC107" stroke-width="0.8" stroke-dasharray="3,2"/>';
+      s += '<line x1="' + (cx + gapPx / 2) + '" y1="' + botY + '" x2="' + (cx + gapPx / 2) + '" y2="' + (gapDimY + 4) + '" stroke="#FFC107" stroke-width="0.8" stroke-dasharray="3,2"/>';
+      s += seamDimLine(cx - gapPx / 2, gapDimY, cx + gapPx / 2, gapDimY);
+      s += '<text x="' + cx + '" y="' + (gapDimY + 20) + '" text-anchor="middle" fill="#FFC107" font-size="13" font-weight="600">Зазор: ' + gap + ' мм</text>';
+      // Thickness dimension
+      const thX = rightX + 18;
+      s += '<line x1="' + rightX + '" y1="' + topY + '" x2="' + (thX + 4) + '" y2="' + topY + '" stroke="#FFC107" stroke-width="0.8" stroke-dasharray="3,2"/>';
+      s += '<line x1="' + rightX + '" y1="' + botY + '" x2="' + (thX + 4) + '" y2="' + botY + '" stroke="#FFC107" stroke-width="0.8" stroke-dasharray="3,2"/>';
+      s += seamDimLine(thX, topY, thX, botY);
+      s += '<text x="' + (thX + 8) + '" y="' + ((topY + botY) / 2 + 4) + '" fill="#FFC107" font-size="13" font-weight="600">S = ' + t + ' мм</text>';
+      // Bevel angle and root face labels
+      if (needBevel) {
+        s += '<text x="' + cx + '" y="' + (topY - 16) + '" text-anchor="middle" fill="#4FC3F7" font-size="13" font-weight="600">Скос кромки: ' + bevelAngle + '° (общий ' + bevelAngle * 2 + '°)</text>';
+        const rfY = botY - rootFacePx / 2;
+        s += '<line x1="' + (cx + gapPx / 2) + '" y1="' + rfY + '" x2="' + (cx + gapPx / 2 + 70) + '" y2="' + rfY + '" stroke="#4FC3F7" stroke-width="0.8" stroke-dasharray="3,2"/>';
+        s += '<text x="' + (cx + gapPx / 2 + 75) + '" y="' + (rfY + 4) + '" fill="#4FC3F7" font-size="12">Притупление: ' + rootFace + ' мм</text>';
+      } else {
+        s += '<text x="' + cx + '" y="' + (topY - 16) + '" text-anchor="middle" fill="#4FC3F7" font-size="13" font-weight="600">Без скоса кромок (I-образная разделка)</text>';
+      }
+      document.getElementById('weldSVG').innerHTML = s;
+      document.getElementById('svg-bevel-type').textContent = needBevel ? (gost === '5264' ? 'V-образная (односторонний скос)' : 'V-образная (односторонний скос)') : 'I-образная (без скоса)';
+      document.getElementById('svg-gap').textContent = gap + ' мм';
+      document.getElementById('svg-angle').textContent = needBevel ? bevelAngle + '° (общий ' + bevelAngle * 2 + '°)' : '—';
+      document.getElementById('svg-root').textContent = needBevel ? rootFace + ' мм' : '—';
+    }
+    // Sync main calculator form -> SVG drawing
+    function updateWeldDiagram() {
+      const t = document.getElementById('calc-thickness').value;
+      const gost = document.getElementById('calc-gost').value === 'gost5264' ? '5264' : '14771';
+      document.getElementById('svg-thickness').value = t;
+      document.getElementById('svg-gost').value = gost;
+      updateWeldSVG();
+    }
+
+    // === Cost ===
+    function calcCost() {
+      const m = document.getElementById('cost-method').value;
+      const mat = document.getElementById('cost-material').value;
+      const t = parseFloat(document.getElementById('cost-thickness').value);
+      const L = parseFloat(document.getElementById('cost-length').value);
+      const rate = parseFloat(document.getElementById('cost-rate').value);
+      const matMult = mat === 'aluminum' ? 1.3 : mat === 'stainless' ? 1.1 : 1.0;
+      const cur = Math.round(t * 40 * matMult);
+      const wireKg = cur * 0.002 * L;
+      const gasL = m === 'mma' ? 0 : (m === 'tig' ? 10 : 8) * (t / 2) * L;
+      const timeH = L / (cur / 100) * 60 / 60;
+      const wireCost = wireKg * 300;
+      const gasCost = gasL * 50;
+      const laborCost = timeH * rate;
+      const total = wireCost + gasCost + laborCost;
+      document.getElementById('c-wire').textContent = Math.round(wireCost) + ' ₽ (' + wireKg.toFixed(2) + ' кг)';
+      document.getElementById('c-gas').textContent = Math.round(gasCost) + ' ₽ (' + gasL.toFixed(1) + ' л)';
+      document.getElementById('c-labor').textContent = Math.round(laborCost) + ' ₽ (' + timeH.toFixed(2) + ' ч)';
+      document.getElementById('c-total').textContent = Math.round(total) + ' ₽';
+      document.getElementById('cost-results').style.display = 'block';
+    }
+
+    // === Wizard ===
+    let wizardStep = 0;
+    const wizardAnswers = {};
+    document.querySelectorAll('.wizard-opt').forEach(btn => {
+      btn.addEventListener('click', () => { wizardAnswers[btn.dataset.q] = btn.dataset.v; wizardNext(); });
+    });
+    function wizardNext() { if (wizardStep < 4) { wizardStep++; showWizardStep(); } if (wizardStep === 4) showWizardResult(); }
+    function wizardPrev() { if (wizardStep > 0) { wizardStep--; showWizardStep(); } }
+    function showWizardStep() {
+      document.querySelectorAll('.wizard-step').forEach(s => s.classList.remove('active'));
+      document.getElementById('wStep' + wizardStep).classList.add('active');
+      document.getElementById('wPrev').style.display = wizardStep === 0 ? 'none' : 'inline-block';
+      document.getElementById('wNext').style.display = wizardStep >= 4 ? 'none' : 'inline-block';
+    }
+    function showWizardResult() {
+      const task = wizardAnswers.task || 'home'; const budget = wizardAnswers.budget || 'mid'; const mat = wizardAnswers.material || 'steel'; const exp = wizardAnswers.experience || 'intermediate';
+      let rec;
+      if (task === 'home' || task === 'auto') rec = budget === 'low' ? 'Ресанта САИ 190' : 'ESAB Rogue 180';
+      else if (task === 'construction') rec = budget === 'low' ? 'Кедр ИНВЕРТОР-200' : 'Fubag IR 200';
+      else rec = budget === 'high' ? 'Miller Multimatic 215' : 'Aurora VECTOR 2500';
+      document.getElementById('wizardResult').innerHTML = '<h3 style="margin-bottom:15px;">Рекомендация: <span style="color:var(--primary-light)">' + rec + '</span></h3><p style="color:var(--text-muted);">Задачи: ' + task + ' | Бюджет: ' + budget + ' | Материал: ' + mat + ' | Опыт: ' + exp + '</p><a href="catalog.html" class="btn btn-primary" style="margin-top:15px;">Перейти в каталог</a>';
+    }
+
+    // === Consumables ===
+    function renderConsumables() {
+      const mat = document.getElementById('con-material').value;
+      const data = {
+        steel: { migWire:'СВ-08Г2С 0.8-1.2мм', migGas:'Ar/CO2 80/20 8-12 л/мин', tigWire:'ЭР-70S-6 1.6-2.4мм', tigGas:'Ar 100% 6-10 л/мин', mmaEl:'МР-3 / АНО-21 2.5-4.0мм' },
+        stainless: { migWire:'СВ-04Х19Н9 0.8-1.0мм', migGas:'Ar/CO2 95/5 8-12 л/мин', tigWire:'ЭР-308L 1.6-2.4мм', tigGas:'Ar 100% 7-10 л/мин', mmaEl:'ЦЛ-11 2.5-3.2мм' },
+        aluminum: { migWire:'AlMg5 1.0-1.2мм', migGas:'Ar 100% 15-20 л/мин', tigWire:'AlSi5 1.6-3.2мм', tigGas:'Ar 100% 12-18 л/мин', mmaEl:'не рекомендуется' },
+        titanium: { migWire:'Ti 1.0мм', migGas:'Ar 100% 12-15 л/мин', tigWire:'Ti 1.6-2.4мм', tigGas:'Ar 100% 10-14 л/мин', mmaEl:'не рекомендуется' },
+        copper: { migWire:'CuSi3 0.8-1.0мм', migGas:'Ar 100% 12-15 л/мин', tigWire:'Cu 1.6-2.4мм', tigGas:'Ar 100% 10-12 л/мин', mmaEl:'не рекомендуется' }
+      };
+      const d = data[mat] || data.steel;
+      document.getElementById('consumablesGrid').innerHTML =
+        '<div class="consumable-item"><h4><svg viewBox="0 0 24 24"><path d="M13 2 L4 14 L11 14 L9 22 L20 9 L13 9 Z" fill="url(#g-primary)"/></svg>MIG/MAG</h4><div class="consumable-row"><span class="consumable-label">Проволока</span><span class="consumable-val">' + d.migWire + '</span></div><div class="consumable-row"><span class="consumable-label">Газ</span><span class="consumable-val">' + d.migGas + '</span></div></div>' +
+        '<div class="consumable-item"><h4><svg viewBox="0 0 24 24"><path d="M12 2a7 7 0 0 0-7 7c0 3 2 5 2 7h10c0-2 2-4 2-7a7 7 0 0 0-7-7z M9 20h6 M10 22h4" stroke="url(#g-blue)" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>TIG</h4><div class="consumable-row"><span class="consumable-label">Присадка</span><span class="consumable-val">' + d.tigWire + '</span></div><div class="consumable-row"><span class="consumable-label">Газ</span><span class="consumable-val">' + d.tigGas + '</span></div></div>' +
+        '<div class="consumable-item"><h4><svg viewBox="0 0 24 24"><path d="M5 3l16 16-2 2L3 5z M9 7l8 8" stroke="url(#g-amber)" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>MMA</h4><div class="consumable-row"><span class="consumable-label">Электроды</span><span class="consumable-val">' + d.mmaEl + '</span></div><div class="consumable-row"><span class="consumable-label">Газ</span><span class="consumable-val">не требуется</span></div></div>';
+    }
+
+    // === Norms ===
+    const norms = [
+      { method:'MIG/MAG', thickness:'3 мм', wire:'0.25 кг/м', gas:'3 л/м', time:'0.8 мин/м' },
+      { method:'MIG/MAG', thickness:'5 мм', wire:'0.45 кг/м', gas:'5 л/м', time:'1.2 мин/м' },
+      { method:'MIG/MAG', thickness:'8 мм', wire:'0.80 кг/м', gas:'8 л/м', time:'2.0 мин/м' },
+      { method:'TIG', thickness:'2 мм', wire:'0.15 кг/м', gas:'4 л/м', time:'1.5 мин/м' },
+      { method:'TIG', thickness:'3 мм', wire:'0.20 кг/м', gas:'5 л/м', time:'2.0 мин/м' },
+      { method:'TIG', thickness:'5 мм', wire:'0.40 кг/м', gas:'7 л/м', time:'3.5 мин/м' },
+      { method:'MMA', thickness:'3 мм', wire:'0.30 кг/м', gas:'—', time:'1.5 мин/м' },
+      { method:'MMA', thickness:'5 мм', wire:'0.55 кг/м', gas:'—', time:'2.5 мин/м' },
+      { method:'MMA', thickness:'8 мм', wire:'0.95 кг/м', gas:'—', time:'4.0 мин/м' }
+    ];
+    function renderNorms() { let h = '<thead><tr><th>Метод</th><th>Толщина</th><th>Проволока</th><th>Газ</th><th>Время</th></tr></thead><tbody>'; norms.forEach(n => { h += '<tr><td>' + n.method + '</td><td>' + n.thickness + '</td><td>' + n.wire + '</td><td>' + n.gas + '</td><td>' + n.time + '</td></tr>'; }); h += '</tbody>'; document.getElementById('normTable').innerHTML = h; }
+
+    // === Converter ===
+    let convType = 'length';
+    const convData = {
+      length: { units: ['мм','см','м','дюймы','футы'], factors: { 'мм':1, 'см':10, 'м':1000, 'дюймы':25.4, 'футы':304.8 } },
+      weight: { units: ['г','кг','т','фунты'], factors: { 'г':1, 'кг':1000, 'т':1000000, 'фунты':453.6 } },
+      pressure: { units: ['МПа','бар','атм','кгс/см2'], factors: { 'МПа':1, 'бар':0.1, 'атм':0.101325, 'кгс/см2':0.0980665 } },
+      temp: { units: ['°C','°F','K'], factors: null }
+    };
+    function setConvTab(type, btn) { convType = type; document.querySelectorAll('.conv-tab').forEach(t => t.classList.remove('active')); btn.classList.add('active'); const data = convData[type]; const fromSel = document.getElementById('convFrom'); const toSel = document.getElementById('convTo'); fromSel.innerHTML = data.units.map(u => '<option value="' + u + '">' + u + '</option>').join(''); toSel.innerHTML = data.units.map(u => '<option value="' + u + '">' + u + '</option>').join(''); if (toSel.options.length > 1) toSel.selectedIndex = 1; convert(); }
+    function convert() { const val = parseFloat(document.getElementById('convInput').value) || 0; const from = document.getElementById('convFrom').value; const to = document.getElementById('convTo').value; let result; if (convType === 'temp') { let c; if (from === '°C') c = val; else if (from === '°F') c = (val - 32) * 5/9; else c = val - 273.15; if (to === '°C') result = c; else if (to === '°F') result = c * 9/5 + 32; else result = c + 273.15; result = result.toFixed(2); } else { const f = convData[convType].factors; result = (val * f[from] / f[to]).toFixed(4); } document.getElementById('convOut').textContent = val + ' ' + from + ' = ' + result + ' ' + to; }
+
+    // === Checklist ===
+    const checklistItems = [
+      { name:'Внешний вид шва', desc:'Ровный, без подрезов, наплывов', defect:'подрез', article:'article-pochemu-rvet-dugu.html' },
+      { name:'Размеры шва', desc:'Соответствие проекту', defect:null, article:null },
+      { name:'Сплошность', desc:'Нет пор, трещин, кратеров', defect:'поры', article:'article-pochemu-rvet-dugu.html' },
+      { name:'Сплавление', desc:'Нет непровара, шлака', defect:'непровар', article:'defect-nepravar.html' },
+      { name:'Отсутствие брызг', desc:'Минимум брызг', defect:null, article:null },
+      { name:'Геометрия', desc:'Правильный угол, симметрия', defect:null, article:null }
+    ];
+    const clResults = {};
+    function checkItem(i, res) {
+      clResults[i] = res;
+      document.getElementById('cl-pass-' + i).classList.toggle('active', res === 'pass');
+      document.getElementById('cl-fail-' + i).classList.toggle('active', res === 'fail');
+      const keys = Object.keys(clResults);
+      const pass = keys.filter(k => clResults[k] === 'pass').length;
+      const fail = keys.length - pass;
+      document.getElementById('checklistResult').style.display = 'block';
+      document.getElementById('cl-total').textContent = keys.length + ' из ' + checklistItems.length;
+      document.getElementById('cl-pass').textContent = pass;
+      document.getElementById('cl-fail').textContent = fail;
+      document.getElementById('cl-verdict').textContent = fail === 0 ? 'Шов принят!' : 'Требует исправления';
+      document.getElementById('cl-verdict').style.color = fail === 0 ? '#4CAF50' : '#f44336';
+      
+      // Smart linking for failed items
+      if (res === 'fail' && checklistItems[i].article) {
+        const item = checklistItems[i];
+        let relatedDiv = document.getElementById('smartLinks');
+        if (!relatedDiv) {
+          relatedDiv = document.createElement('div');
+          relatedDiv.id = 'smartLinks';
+          relatedDiv.className = 'results';
+          relatedDiv.style.marginTop = '15px';
+          document.getElementById('checklistResult').appendChild(relatedDiv);
+        }
+        let linksHtml = '<h4 style="margin-bottom:10px;">Рекомендуемые материалы:</h4>';
+        linksHtml += '<div style="display:flex;flex-wrap:wrap;gap:10px;">';
+        linksHtml += '<a href="' + item.article + '" class="btn btn-outline btn-sm" style="margin:0;"><svg viewBox="0 0 24 24" width="16" height="16" style="fill:none;stroke:currentColor;stroke-width:2"><path d="M13 2 L4 14 L11 14 L9 22 L20 9 L13 9 Z"/></svg> Как устранить ' + item.defect + '</a>';
+        if (item.defect === 'непровар') {
+          linksHtml += '<a href="article-svarochnye-gazy.html" class="btn btn-outline btn-sm" style="margin:0;"> Газы и материалы</a>';
+        }
+        linksHtml += '</div>';
+        relatedDiv.innerHTML = linksHtml;
+      } else {
+        // Remove smart links if item was changed from fail to pass
+        const existing = document.getElementById('smartLinks');
+        if (existing) existing.remove();
+      }
+    }
+
+    // === Init ===
+    renderConsumables();
+    renderNorms();
+    renderChecklist();
+    renderCalcHistory();
+    setConvTab('length', document.querySelector('.conv-tab'));
+    updateWeldSVG();
+
+    // === XLSX Spec Import ===
+    let xlsxData = [];
+    function handleXlsxUpload(event) {
+      const file = event.target.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        try {
+          const data = new Uint8Array(e.target.result);
+          const workbook = XLSX.read(data, { type: 'array' });
+          const sheetName = workbook.SheetNames[0];
+          const sheet = workbook.Sheets[sheetName];
+          const json = XLSX.utils.sheet_to_json(sheet, { defval: '' });
+          if (json.length === 0) { alert('Файл пустой'); return; }
+          // Normalize column names (lowercase, trim)
+          const headers = Object.keys(json[0]).map(h => h.trim().toLowerCase());
+          const idxLen = headers.findIndex(h => h.includes('длина') || h === 'l' || h === 'length');
+          const idxThick = headers.findIndex(h => h.includes('толщина') || h.includes('thickness') || h === 'т' || h === 't');
+          const idxMetal = headers.findIndex(h => h.includes('металл') || h.includes('материал') || h === 'м' || h === 'metal' || h === 'mat');
+          // Parse rows
+          xlsxData = json.map(row => {
+            const keys = Object.keys(row);
+            const len = parseFloat(keys[idxLen] !== undefined ? row[keys[idxLen]] : 0);
+            const thick = parseFloat(keys[idxThick] !== undefined ? row[keys[idxThick]] : 0);
+            const metal = keys[idxMetal] !== undefined ? String(row[keys[idxMetal]]).trim().toLowerCase() : 'steel';
+            return { length: len, thickness: thick, metal: metal };
+          }).filter(r => r.length > 0 && r.thickness > 0);
+          if (xlsxData.length === 0) { alert('Не найдены строки с данными. Убедитесь, что колонки называются: Длина, Толщина, Металл'); return; }
+          renderXlsxTable();
+          calcXlsxTotals();
+        } catch (err) {
+          alert('Ошибка чтения файла: ' + err.message);
+        }
+      };
+      reader.readAsArrayBuffer(file);
+    }
+    function renderXlsxTable() {
+      const metalMap = { 'сталь': 'steel', 'углеродистая': 'steel', 'steel': 'steel', 'нерж': 'stainless', 'нержавейка': 'stainless', 'нержавеющая': 'stainless', 'aluminum': 'aluminum', 'алюминий': 'aluminum', 'алюм': 'aluminum', 'титан': 'titanium', 'titanium': 'titanium', 'медь': 'copper', 'copper': 'copper' };
+      let h = '<thead><tr><th>№</th><th>Длина шва (м)</th><th>Толщина (мм)</th><th>Металл</th><th>Проволока (кг)</th><th>Газ (л)</th></tr></thead><tbody>';
+      xlsxData.forEach((r, i) => {
+        const matMult = r.metal === 'aluminum' ? 1.3 : r.metal === 'titanium' ? 1.2 : r.metal === 'stainless' ? 1.1 : 1.0;
+        const cur = Math.round(r.thickness * 40 * matMult);
+        const wire = (cur * 0.002 * r.length).toFixed(3);
+        const gas = Math.round(r.thickness * 2 + 14) * r.length;
+        const metalLabel = Object.keys(metalMap).find(k => metalMap[k] === r.metal) || r.metal;
+        h += '<tr><td>' + (i + 1) + '</td><td>' + r.length + '</td><td>' + r.thickness + '</td><td>' + metalLabel + '</td><td>' + wire + '</td><td>' + gas.toFixed(1) + '</td></tr>';
+      });
+      h += '</tbody>';
+      document.getElementById('xlsxTable').innerHTML = h;
+      document.getElementById('xlsxPreview').style.display = 'block';
+    }
+    function calcXlsxTotals() {
+      let totalWire = 0, totalGas = 0;
+      xlsxData.forEach(r => {
+        const matMult = r.metal === 'aluminum' ? 1.3 : r.metal === 'titanium' ? 1.2 : r.metal === 'stainless' ? 1.1 : 1.0;
+        const cur = Math.round(r.thickness * 40 * matMult);
+        totalWire += cur * 0.002 * r.length;
+        totalGas += (Math.round(r.thickness * 2 + 14)) * r.length;
+      });
+      document.getElementById('xlsx-shov-count').textContent = xlsxData.length;
+      document.getElementById('xlsx-wire-total').textContent = totalWire.toFixed(2) + ' кг';
+      document.getElementById('xlsx-gas-total').textContent = totalGas.toFixed(1) + ' л';
+      document.getElementById('xlsx-length-total').textContent = xlsxData.reduce((s, r) => s + r.length, 0).toFixed(2) + ' м';
+    }
+    function exportXlsxPDF() {
+      if (!xlsxData.length) { alert('Сначала загрузите файл!'); return; }
+      const content = document.getElementById('xlsxResultsContent');
+      const table = document.getElementById('xlsxTable');
+      const win = window.open('', '_blank');
+      win.document.write(`
+        <html><head><meta charset="UTF-8"><title>Спецификация швов</title>
+        <style>body{font-family:Arial,sans-serif;padding:40px;color:#333}
+        h1{color:#FF5722} h2{color:#333;margin-top:30px}
+        table{width:100%;border-collapse:collapse;margin-top:15px}
+        th,td{border:1px solid #ddd;padding:8px;text-align:left;font-size:0.9rem}
+        th{background:#f5f5f5}
+        .result-row{display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid #eee}
+        .result-label{color:#666}.result-val{font-weight:700}
+        .signature-block{margin-top:60px;display:grid;grid-template-columns:1fr 1fr;gap:40px}
+        .signature-line{border-top:1px solid #333;margin-top:40px;padding-top:5px;font-size:0.85rem}</style></head>
+        <body><h1>Спецификация сварных швов</h1>
+        <p>Дата: ${new Date().toLocaleDateString('ru-RU')} | Источник: ${document.getElementById('xlsxFileInput').files[0]?.name || '—'}</p>
+        ${table.outerHTML}
+        <h2>Итоговый расчёт</h2>${content.innerHTML}
+        <div class="signature-block">
+          <div><div class="signature-line">Сварщик / Подпись</div></div>
+          <div><div class="signature-line">Контроль качества / Подпись</div></div>
+          <div><div class="signature-line">Инженер / Подпись</div></div>
+          <div><div class="signature-line">Дата / Печать</div></div>
+        </div></body></html>
+      `);
+      win.document.close();
+      setTimeout(() => win.print(), 500);
+    }
+    function exportXlsxResult() {
+      if (!xlsxData.length) { alert('Сначала загрузите файл!'); return; }
+      const metalMap = { 'steel': 'Углеродистая сталь', 'stainless': 'Нержавеющая сталь', 'aluminum': 'Алюминий', 'titanium': 'Титан', 'copper': 'Медь' };
+      let html = '<table><thead><tr><th>№</th><th>Длина (м)</th><th>Толщина (мм)</th><th>Металл</th><th>Проволока (кг)</th><th>Газ (л)</th></tr></thead><tbody>';
+      xlsxData.forEach((r, i) => {
+        const matMult = r.metal === 'aluminum' ? 1.3 : r.metal === 'titanium' ? 1.2 : r.metal === 'stainless' ? 1.1 : 1.0;
+        const cur = Math.round(r.thickness * 40 * matMult);
+        const wire = (cur * 0.002 * r.length).toFixed(3);
+        const gas = (Math.round(r.thickness * 2 + 14)) * r.length;
+        const metalLabel = metalMap[r.metal] || r.metal;
+        html += `<tr><td>${i + 1}</td><td>${r.length}</td><td>${r.thickness}</td><td>${metalLabel}</td><td>${wire}</td><td>${gas.toFixed(1)}</td></tr>`;
+      });
+      html += '</tbody></table>';
+      const blob = new Blob(['\ufeff' + html], { type: 'application/vnd.ms-excel' });
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      a.download = 'Спецификация_' + new Date().toLocaleDateString('ru-RU').replace(/\./g, '-') + '.xls';
+      a.click();
+    }
+  </script>
+</body>
+</html>

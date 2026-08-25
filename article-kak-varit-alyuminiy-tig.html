@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Как варить алюминий TIG — полное руководство | WELDPRO</title>
+  <meta name="description" content="Выбор аппарата AC/DC, подготовка поверхности, настройка тока и аргона, частые ошибки начинающих. Пошаговая инструкция по TIG сварке алюминия." />
+  <meta name="keywords" content="сварка алюминия TIG, TIG AC DC алюминий, как варить алюминий, аргоновая сварка алюминия" />
+  <link rel="stylesheet" href="css/styles.css" />
+</head>
+<body>
+  <div class="loader" id="loader"><div class="loader-logo">WELDPRO</div><div class="loader-bar"><div class="loader-bar-fill"></div></div></div>
+  <div class="bg-anim"></div>
+
+  <nav class="navbar" id="navbar">
+    <a href="index.html" class="nav-logo"><div class="nav-logo-icon"><svg viewBox="0 0 24 24" width="28" height="28"><path d="M13 2 L4 14 L11 14 L9 22 L20 9 L13 9 Z" fill="url(#g-primary)"/></svg></div>WELD<span>PRO</span></a>
+    <ul class="nav-links" id="navLinks">
+      <li><a href="index.html">Главная</a></li><li><a href="catalog.html">Каталог</a></li><li><a href="calculators.html">Калькуляторы</a></li><li><a href="wiki.html">База знаний</a></li><li><a href="account.html">Личный кабинет</a></li>
+    </ul>
+    <div class="nav-right">
+      <button class="theme-btn" onclick="toggleTheme()"><svg viewBox="0 0 24 24" width="20" height="20"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z" fill="currentColor"/></svg></button>
+      <div class="burger" id="burger" onclick="toggleBurger()"><span></span><span></span><span></span></div>
+    </div>
+  </nav>
+
+  <section class="section" style="padding-top:120px;">
+    <div class="container">
+      <div class="breadcrumbs reveal"><a href="index.html">Главная</a><span>/</span><a href="wiki.html">База знаний</a><span>/</span><span>Как варить алюминий TIG</span></div>
+      <article class="seo-article reveal">
+        <h1>Как варить алюминий TIG: полное руководство</h1>
+        <div class="meta">20 минут чтения · Обновлено 20 августа 2026 · WELDPRO</div>
+        <p>Сварка алюминия методом TIG (tungsten inert gas) — один из самых востребованных и в то же время сложных процессов. Алюминий обладает уникальными свойствами: высокой теплопроводностью, низкой плотностью и стойкой оксидной плёнкой. В этой статье мы подробно разберём все этапы — от выбора аппарата до контроля качества шва.</p>
+
+        <h2>1. Выбор сварочного аппарата TIG AC/DC</h2>
+        <p>Для сварки алюминия обязательно нужен аппарат с режимом <strong>AC (переменный ток)</strong>. Почему AC? Оксидная плёнка на алюминии имеет температуру плавления 2050°C, в то время как сам алюминий плавится при 660°C. Переменный ток в фазе положительного полупериода разрушает эту плёнку, а в отрицательном — плавит металл.</p>
+        <ul>
+          <li><strong>Минимальный ток:</strong> от 150-200А для листов 1-3 мм.</li>
+          <li><strong>Функция импульса:</strong> помогает сваривать тонкий металл без прожога.</li>
+          <li><strong>Баланс волны:</strong> регулировка соотношения положительного/отрицательного полупериода (обычно 60-70% положительный).</li>
+          <li><strong>Частота AC:</strong> 50-250 Гц. Высокая частота — более узкая и глубокая ванна.</li>
+        </ul>
+
+        <h2>2. Подготовка поверхности</h2>
+        <p>Алюминий очень чувствителен к загрязнениям. Даже небольшое количество масла или влаги приведёт к порам в шве.</p>
+        <ul>
+          <li>Очистите поверхность нержавеющей щёткой или скребком.</li>
+          <li>Удалите оксидную плёнку специальными растворами или механически.</li>
+          <li>Обезжирьте ацетоном или спиртом.</li>
+          <li>Сушите детали перед сваркой.</li>
+        </ul>
+
+        <h2>3. Выбор вольфрамового электрода</h2>
+        <p>Для AC сварки алюминия используются:</p>
+        <ul>
+          <li><strong>Чистый вольфрам (зелёный наконечник)</strong> — классический выбор, но электрод быстро изнашивается.</li>
+          <li><strong>Церированный вольфрам (серый)</strong> — лучшая стойкость, рекомендуется для AC.</li>
+          <li><strong>Лантанированный вольфрам (золотистый)</strong> — универсальный, хорошо работает на AC и DC.</li>
+        </ul>
+        <p>Диаметр электрода: 1.6 мм для тока до 120А, 2.4 мм для 120-200А, 3.2 мм для 200А+.</p>
+
+        <h2>4. Настройка тока и аргона</h2>
+        <p>Используйте <a href="calculators.html" style="color:var(--primary-light);">калькулятор параметров WELDPRO</a> для точного расчёта. Общие рекомендации:</p>
+        <ul>
+          <li><strong>Ток:</strong> примерно 25-35А на 1 мм толщины (AC).</li>
+          <li><strong>Расход аргона:</strong> 12-18 л/мин.</li>
+          <li><strong>Диаметр присадки:</strong> 1.6 мм для толщины до 3 мм, 2.4 мм для 3-6 мм.</li>
+          <li><strong>Защита обратной стороны:</strong> обязательна для труб и тонких листов.</li>
+        </ul>
+
+        <h2>5. Частые ошибки начинающих</h2>
+        <ul>
+          <li><strong>Сварка DC.</strong> На постоянном токе оксидная плёнка не разрушается — получается чёрный шов с включениями.</li>
+          <li><strong>Слишком быстрое движение.</strong> Алюминий быстро отводит тепло — двигайтесь медленнее, чем при сварке стали.</li>
+          <li><strong>Отсутствие защиты обратной стороны.</strong> Шов с обратной стороны окисляется и теряет прочность.</li>
+          <li><strong>Загрязнённый электрод.</strong> Не касайтесь электродом присадки или металла — нагар нарушит дугу.</li>
+        </ul>
+
+        <h2>6. Контроль качества шва</h2>
+        <p>Качественный шов на алюминии имеет серебристый или слегка золотистый цвет. Чёрный нагар, поры или трещины — признаки ошибок. Используйте <a href="calculators.html" style="color:var(--primary-light);">чек-лист проверки WELDPRO</a> для оценки.</p>
+
+        <p style="margin-top:30px;padding:20px;background:rgba(255,87,34,0.08);border-radius:12px;border:1px solid rgba(255,87,34,0.2);"><strong>Совет:</strong> Начинайте практиковаться на листах толщиной 3-5 мм. Тонкий металл (1-2 мм) требует большого опыта и точной настройки импульса.</p>
+      </article>
+    </div>
+  </section>
+
+  <footer class="footer">
+    <div class="footer-content">
+      <a href="index.html" class="footer-logo"><svg viewBox="0 0 24 24" width="28" height="28"><path d="M13 2 L4 14 L11 14 L9 22 L20 9 L13 9 Z" fill="url(#g-primary)"/></svg>WELD<span>PRO</span></a>
+      <div class="footer-links"><a href="catalog.html">Каталог</a><a href="calculators.html">Калькуляторы</a><a href="wiki.html">База знаний</a><a href="account.html">Личный кабинет</a></div>
+    </div>
+    <div class="footer-bottom">&copy; 2026 WELDPRO. Все права защищены.</div>
+  </footer>
+  <button class="scroll-top" id="scrollTop" onclick="scrollToTop()"><svg viewBox="0 0 24 24"><path d="M12 19V5 M5 12l7-7 7 7" stroke="white" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+
+  <script src="js/app.js"></script>
+</body>
+</html>

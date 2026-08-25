@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>WELDPRO — Профессиональные сварочные решения и оборудование</title>
+  <meta name="description" content="WELDPRO — каталог сварочного оборудования, калькуляторы параметров и стоимости, глоссарий, карта дефектов, база знаний. MIG/MAG, TIG, MMA." />
+  <meta name="keywords" content="сварка, сварочное оборудование, MIG, MAG, TIG, MMA, калькулятор сварки, сварочный аппарат, WELDPRO" />
+  <meta property="og:title" content="WELDPRO — Профессиональные сварочные решения" />
+  <meta property="og:description" content="Каталог оборудования, калькуляторы, глоссарий, карта дефектов — всё для сварщиков." />
+  <meta property="og:type" content="website" />
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='20' fill='%23FF5722'/><path d='M55 15 L25 55 L45 55 L40 85 L75 40 L55 40 Z' fill='white'/></svg>" />
+  <link rel="manifest" href="manifest.json" />
+  <link rel="stylesheet" href="css/styles.css" />
+</head>
+<body>
+  <!-- Loader -->
+  <div class="loader" id="loader">
+    <div class="loader-logo">WELDPRO</div>
+    <div class="loader-bar"><div class="loader-bar-fill"></div></div>
+  </div>
+
+  <!-- Background -->
+  <div class="bg-anim"></div>
+  <div class="sparks" id="sparks"></div>
+  <div class="weld-scene" id="weldScene">
+    <svg viewBox="0 0 1920 1080" preserveAspectRatio="xMidYMid slice">
+      <circle class="weld-glow" cx="1500" cy="700" r="70" fill="url(#g-amber)" opacity="0.7"/>
+      <rect x="1200" y="760" width="600" height="30" rx="4" fill="#1a1a1a" stroke="#333" stroke-width="1"/>
+      <rect x="1200" y="760" width="600" height="6" rx="3" fill="#2a2a2a"/>
+      <g class="weld-torch">
+        <rect x="1450" y="200" width="14" height="420" rx="7" fill="#1E1E1E" stroke="#444" stroke-width="1"/>
+        <rect x="1445" y="200" width="24" height="40" rx="6" fill="#2a2a2a" stroke="#555" stroke-width="1"/>
+        <rect x="1452" y="240" width="10" height="360" rx="5" fill="#111"/>
+        <path d="M1450 620 L1478 620 L1472 650 L1456 650 Z" fill="#333" stroke="#555" stroke-width="1"/>
+      </g>
+      <g class="weld-arc">
+        <path d="M1464 650 Q1468 690 1464 760" stroke="#FFFFFF" stroke-width="3" fill="none" opacity="0.95"/>
+        <path d="M1464 650 Q1468 690 1464 760" stroke="#FFE082" stroke-width="6" fill="none" opacity="0.6"/>
+        <path d="M1464 650 Q1468 690 1464 760" stroke="#FFC107" stroke-width="10" fill="none" opacity="0.3"/>
+        <path d="M1464 650 Q1468 690 1464 760" stroke="#FF5722" stroke-width="16" fill="none" opacity="0.15"/>
+      </g>
+      <rect x="1450" y="755" width="28" height="8" rx="4" fill="#FF6B35" opacity="0.8"/>
+      <rect x="1450" y="755" width="28" height="8" rx="4" fill="#FFC107" opacity="0.4"/>
+    </svg>
+  </div>
+
+  <!-- Navbar -->
+  <nav class="navbar" id="navbar">
+    <a href="index.html" class="nav-logo">
+      <div class="nav-logo-icon"><svg viewBox="0 0 24 24" width="28" height="28"><path d="M13 2 L4 14 L11 14 L9 22 L20 9 L13 9 Z" fill="url(#g-primary)"/></svg></div>
+      WELD<span>PRO</span>
+    </a>
+    <ul class="nav-links" id="navLinks">
+      <li><a href="index.html" class="active">Главная</a></li>
+      <li><a href="catalog.html">Каталог</a></li>
+      <li><a href="calculators.html">Калькуляторы</a></li>
+      <li><a href="wiki.html">База знаний</a></li>
+      <li><a href="account.html">Личный кабинет</a></li>
+      <li><a href="#download">Скачать</a></li>
+    </ul>
+    <div class="nav-right">
+      <button class="theme-btn" id="themeBtn" onclick="toggleTheme()" title="Сменить тему">
+        <svg id="iconMoon" viewBox="0 0 24 24" width="20" height="20"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z" fill="currentColor"/></svg>
+      </button>
+      <div class="burger" id="burger" onclick="toggleBurger()"><span></span><span></span><span></span></div>
+    </div>
+  </nav>
+
+  <!-- Hero -->
+  <section class="hero" id="hero">
+    <div class="hero-content">
+      <div class="hero-badge">
+        <svg viewBox="0 0 24 24" width="16" height="16"><path d="M13 2 L4 14 L11 14 L9 22 L20 9 L13 9 Z" fill="url(#g-primary)"/></svg>
+        Профессиональное сварочное оборудование
+      </div>
+      <h1>Сварка без границ с <span class="grad">WELDPRO</span></h1>
+      <p>Каталог оборудования, калькуляторы параметров и стоимости, глоссарий, карта дефектов, подбор расходных материалов и многое другое — всё для профессиональных сварщиков.</p>
+      <div class="hero-btns">
+        <a href="catalog.html" class="btn btn-primary">
+          <svg viewBox="0 0 24 24" width="20" height="20"><path d="M4 4h16v16H4z M4 9h16 M9 4v16" stroke="white" stroke-width="2" fill="none"/></svg>
+          Открыть каталог
+        </a>
+        <a href="calculators.html" class="btn btn-outline">
+          <svg viewBox="0 0 24 24" width="20" height="20"><path d="M5 3h14v18H5z M9 7h6 M9 11h6 M9 15h4" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round"/></svg>
+          Калькуляторы
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Stats -->
+  <div class="stats reveal">
+    <div class="stat"><div class="stat-num" data-count="14">0</div><div class="stat-label">Моделей в каталоге</div></div>
+    <div class="stat"><div class="stat-num" data-count="35">0</div><div class="stat-label">Терминов в глоссарии</div></div>
+    <div class="stat"><div class="stat-num" data-count="8">0</div><div class="stat-label">Инструментов</div></div>
+    <div class="stat"><div class="stat-num" data-count="6">0</div><div class="stat-label">Статей в базе</div></div>
+  </div>
+
+  <!-- Services -->
+  <section class="section" id="services">
+    <div class="container">
+      <div class="section-header reveal">
+        <div class="section-tag"><svg viewBox="0 0 24 24" width="14" height="14"><path d="M12 2L2 7l10 5 10-5-10-5z M2 17l10 5 10-5 M2 12l10 5 10-5" stroke="url(#g-primary)" stroke-width="2" fill="none"/></svg>Что мы предлагаем</div>
+        <h2 class="section-title">Профессиональные услуги</h2>
+        <p class="section-desc">Полный спектр решений для сварщиков — от подбора оборудования до расчёта параметров.</p>
+      </div>
+      <div class="grid services-grid">
+        <div class="card service-card reveal">
+          <div class="icon-box g-primary"><svg viewBox="0 0 24 24"><path d="M3 10h18 M5 10v8a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-8 M9 4l3 3 3-3" stroke="url(#g-primary)" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+          <h3>Подбор оборудования</h3>
+          <p>Поможем выбрать сварочный аппарат под ваши задачи: MIG/MAG, TIG, MMA — для дома, автосервиса или производства.</p>
+        </div>
+        <div class="card service-card reveal">
+          <div class="icon-box g-blue"><svg viewBox="0 0 24 24"><path d="M5 3h14v18H5z M9 7h6 M9 11h6 M9 15h4" stroke="url(#g-blue)" stroke-width="2" fill="none" stroke-linecap="round"/></svg></div>
+          <h3>Калькуляторы и расчёты</h3>
+          <p>Калькулятор параметров сварки, стоимости работ, расхода материалов и конвертер единиц — всё в одном месте.</p>
+        </div>
+        <div class="card service-card reveal">
+          <div class="icon-box g-green"><svg viewBox="0 0 24 24"><path d="M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20z M12 7v5l3 3" stroke="url(#g-green)" stroke-width="2" fill="none" stroke-linecap="round"/></svg></div>
+          <h3>База знаний</h3>
+          <p>Глоссарий из 35+ терминов, карта дефектов с причинами и устранением, справочник материалов и статьи.</p>
+        </div>
+        <div class="card service-card reveal">
+          <div class="icon-box g-purple"><svg viewBox="0 0 24 24"><path d="M3 12h4l3-9 4 18 3-9h4" stroke="url(#g-purple)" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+          <h3>Инструменты сварщика</h3>
+          <p>Подбор расходных материалов, нормы расхода, чек-лист проверки шва, конвертер единиц и многое другое.</p>
+        </div>
+        <div class="card service-card reveal">
+          <div class="icon-box g-amber"><svg viewBox="0 0 24 24"><path d="M21 16V8a2 2 0 0 0-1-1.7l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.7l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z M3.3 7l8.7 5 8.7-5 M12 22V12" stroke="url(#g-amber)" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+          <h3>Каталог оборудования</h3>
+          <p>14 моделей от ведущих брендов: Miller, Lincoln, ESAB, Сварог, Aurora и других. Фильтры, сравнение, избранное.</p>
+        </div>
+        <div class="card service-card reveal">
+          <div class="icon-box g-primary"><svg viewBox="0 0 24 24"><path d="M12 2v4 M12 18v4 M4.9 4.9l2.8 2.8 M16.3 16.3l2.8 2.8 M2 12h4 M18 12h4 M4.9 19.1l2.8-2.8 M16.3 7.7l2.8-2.8" stroke="url(#g-primary)" stroke-width="2" fill="none" stroke-linecap="round"/></svg></div>
+          <h3>Поддержка и обучение</h3>
+          <p>Визард подбора оборудования, чек-листы качества, справочники и FAQ — всё для начинающих и профи.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Methods -->
+  <section class="section" id="methods">
+    <div class="container">
+      <div class="section-header reveal">
+        <div class="section-tag"><svg viewBox="0 0 24 24" width="14" height="14"><path d="M13 2 L4 14 L11 14 L9 22 L20 9 L13 9 Z" fill="url(#g-primary)"/></svg>Методы сварки</div>
+        <h2 class="section-title">Три основных метода</h2>
+        <p class="section-desc">Каждый метод имеет свои преимущества и области применения.</p>
+      </div>
+      <div class="grid methods-grid">
+        <div class="card method-card reveal">
+          <div class="method-visual mig"><svg viewBox="0 0 24 24"><path d="M13 2 L4 14 L11 14 L9 22 L20 9 L13 9 Z" fill="url(#g-primary)"/></svg></div>
+          <div class="method-body">
+            <h3>MIG / MAG</h3>
+            <p>Полуавтоматическая сварка в среде защитного газа. Высокая производительность, чистый шов, минимальные брызги.</p>
+            <div class="method-tags"><span class="method-tag">Сталь</span><span class="method-tag">Алюминий</span><span class="method-tag">Нержавейка</span><span class="method-tag">Производство</span></div>
+          </div>
+        </div>
+        <div class="card method-card reveal">
+          <div class="method-visual tig"><svg viewBox="0 0 24 24"><path d="M12 2a7 7 0 0 0-7 7c0 3 2 5 2 7h10c0-2 2-4 2-7a7 7 0 0 0-7-7z M9 20h6 M10 22h4" stroke="url(#g-blue)" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+          <div class="method-body">
+            <h3>TIG (Argon)</h3>
+            <p>Сварка вольфрамовым электродом в аргоне. Самый чистый и точный шов. Идеально для тонкого металла и алюминия.</p>
+            <div class="method-tags"><span class="method-tag">Тонкий металл</span><span class="method-tag">Алюминий</span><span class="method-tag">Титан</span><span class="method-tag">Премиум</span></div>
+          </div>
+        </div>
+        <div class="card method-card reveal">
+          <div class="method-visual mma"><svg viewBox="0 0 24 24"><path d="M5 3l16 16-2 2L3 5z M9 7l8 8" stroke="url(#g-amber)" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+          <div class="method-body">
+            <h3>MMA (Ручная)</h3>
+            <p>Ручная дуговая сварка покрытым электродом. Универсальность, работа на улице, минимальные требования к оборудованию.</p>
+            <div class="method-tags"><span class="method-tag">Универсальная</span><span class="method-tag">Сталь</span><span class="method-tag">Стройка</span><span class="method-tag">Бытовая</span></div>
+          </div>
+        </div>
+      </div>
+      <table class="compare-table reveal">
+        <thead><tr><th>Параметр</th><th>MIG/MAG</th><th>TIG</th><th>MMA</th></tr></thead>
+        <tbody>
+          <tr><td>Производительность</td><td>Высокая</td><td>Низкая</td><td>Средняя</td></tr>
+          <tr><td>Качество шва</td><td>Хорошее</td><td>Отличное</td><td>Среднее</td></tr>
+          <tr><td>Сложность</td><td>Средняя</td><td>Высокая</td><td>Низкая</td></tr>
+          <tr><td>Толщина металла</td><td>0.8-30 мм</td><td>0.5-8 мм</td><td>1.5-20 мм</td></tr>
+          <tr><td>Работа на улице</td><td>Ограничена</td><td>Нет</td><td>Да</td></tr>
+          <tr><td>Стоимость</td><td>Средняя</td><td>Высокая</td><td>Низкая</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- Reviews -->
+  <section class="section" id="reviews">
+    <div class="container">
+      <div class="section-header reveal">
+        <div class="section-tag"><svg viewBox="0 0 24 24" width="14" height="14"><path d="M9 11H5a2 2 0 0 0-2 2v3a2 2 0 0 0 2 2h2v4l4-4h2a2 2 0 0 0 2-2v-3a2 2 0 0 0-2-2z M19 4h-4a2 2 0 0 0-2 2v3a2 2 0 0 0 2 2h2v4l4-4V6a2 2 0 0 0-2-2z" fill="url(#g-primary)"/></svg>Отзывы</div>
+        <h2 class="section-title">Что говорят клиенты</h2>
+      </div>
+      <div class="grid reviews-grid">
+        <div class="card review-card reveal"><div class="review-stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div><p>Работаю сварщиком уже 12 лет, перепробовал кучу всяких программ и таблиц. WELDPRO реально выделяется — калькулятор параметров выдаёт адекватные значения, не как в некоторых приложениях, где ток в два раза завышен.</p><div class="review-author"><div class="review-avatar">А</div><div><div class="review-name">Алексей Морозов</div><div class="review-role">Сварщик 6 разряда, судостроение</div></div></div></div>
+        <div class="card review-card reveal"><div class="review-stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div><p>У нас автосервис, варим выхлопные системы, днища, иногда подрамники. Раньше параметры подбирали на глаз, потом переделывали. Сейчас вбиваю толщину и материал в калькулятор — получаю ток, газ, проволоку.</p><div class="review-author"><div class="review-avatar">Д</div><div><div class="review-name">Дмитрий Кравцов</div><div class="review-role">Владелец автосервиса</div></div></div></div>
+        <div class="card review-card reveal"><div class="review-stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div><p>Я бригадир на стройке, у меня в подчинении 8 человек, половина — молодые сварщики после училища. Карта дефектов стала настоящим учебником — показываю ребятам на телефоне, что такое непровар, подрез, поры.</p><div class="review-author"><div class="review-avatar">С</div><div><div class="review-name">Сергей Волков</div><div class="review-role">Бригадир, строительная компания</div></div></div></div>
+        <div class="card review-card reveal"><div class="review-stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div><p>Работаю инженером-технологом на заводе металлоконструкций. Калькулятор стоимости работ использую для оценки заказов — очень удобно прикинуть затраты на проволоку, газ и рабочее время.</p><div class="review-author"><div class="review-avatar">И</div><div><div class="review-name">Игорь Семёнов</div><div class="review-role">Инженер-технолог, завод металлоконструкций</div></div></div></div>
+        <div class="card review-card reveal"><div class="review-stars">&#9733;&#9733;&#9733;&#9733;&#9734;</div><p>Скачал приложение чисто из любопытства, но оказалось очень полезным. Варю дома гараж, заборы, всякие мелочи. Визард подбора оборудования подсказал, что мне хватит Ресанты 190 — реально взял её и не жалею.</p><div class="review-author"><div class="review-avatar">М</div><div><div class="review-name">Михаил Петров</div><div class="review-role">Домашний мастер</div></div></div></div>
+        <div class="card review-card reveal"><div class="review-stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div><p>У нас учебный центр, готовим сварщиков с нуля. WELDPRO используем как наглядное пособие — глоссарий, база знаний, карта дефектов. Студенты заходят с телефонов, читают, потом подходят с вопросами.</p><div class="review-author"><div class="review-avatar">Н</div><div><div class="review-name">Николай Захаров</div><div class="review-role">Преподаватель, учебный центр</div></div></div></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FAQ -->
+  <section class="section" id="faq">
+    <div class="container">
+      <div class="section-header reveal">
+        <div class="section-tag"><svg viewBox="0 0 24 24" width="14" height="14"><path d="M9 9a3 3 0 0 1 6 0c0 2-3 2.5-3 4 M12 17h.01" stroke="url(#g-primary)" stroke-width="2" fill="none" stroke-linecap="round"/></svg>FAQ</div>
+        <h2 class="section-title">Частые вопросы</h2>
+      </div>
+      <div class="faq-list" id="faqList"></div>
+    </div>
+  </section>
+
+  <!-- Download -->
+  <section class="section" id="download">
+    <div class="container">
+      <div class="download-box reveal">
+        <h2>Скачайте <span class="grad">WELDPRO</span> для Windows</h2>
+        <p>Полная версия приложения со всеми инструментами, журналом работ и офлайн-доступом.</p>
+        <a href="https://github.com/pipinstall0009/weldpro/releases/download/v2.0.0/WELDPRO%20Setup%202.0.0.exe" class="btn btn-primary" style="font-size:1.2rem;padding:20px 45px;" download>
+          <svg viewBox="0 0 24 24" width="24" height="24"><path d="M12 3v12 M7 10l5 5 5-5 M4 20h16" stroke="white" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          Скачать бесплатно
+        </a>
+        <div class="download-info">
+          <div class="download-info-item"><div class="label">Версия</div><div class="value">2.0.0</div></div>
+          <div class="download-info-item"><div class="label">Размер</div><div class="value">78 МБ</div></div>
+          <div class="download-info-item"><div class="label">Платформа</div><div class="value">Windows</div></div>
+        </div>
+        <div class="requirements">
+          <h4>Системные требования</h4>
+          <ul>
+            <li><svg viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5" stroke="url(#g-green)" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>Windows 10 / 11 (64-bit)</li>
+            <li><svg viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5" stroke="url(#g-green)" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>Процессор x64 (Intel / AMD)</li>
+            <li><svg viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5" stroke="url(#g-green)" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>2 ГБ оперативной памяти</li>
+            <li><svg viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5" stroke="url(#g-green)" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>300 МБ свободного места на диске</li>
+          </ul>
+        </div>
+        <div class="share-btns">
+          <button class="share-btn" onclick="share('vk')" title="ВКонтакте"><svg viewBox="0 0 24 24"><path d="M13 18c-7 0-11-5-11-11 0-1 1-1 1-1h3l1 3c1 3 2 4 3 4V6c0-1 1-1 1-1h2c1 0 1 1 1 1v3c1 0 2-1 3-3 0-1 1-1 2-1h2c1 0 1 1 0 2-1 2-2 3-2 4s1 2 2 4c1 1 0 2-1 2h-2c-1 0-2-1-3-2-1 1-2 2-3 2z" fill="url(#g-blue)"/></svg></button>
+          <button class="share-btn" onclick="share('tg')" title="Telegram"><svg viewBox="0 0 24 24"><path d="M21 3L3 10.5l5 2L9 21l3.5-3.5L18 19z" fill="url(#g-blue)"/></svg></button>
+          <button class="share-btn" onclick="share('wa')" title="WhatsApp"><svg viewBox="0 0 24 24"><path d="M12 2a10 10 0 0 0-8.6 15L2 22l5.2-1.4A10 10 0 1 0 12 2z" fill="url(#g-green)"/></svg></button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="footer-content">
+      <a href="index.html" class="footer-logo"><svg viewBox="0 0 24 24" width="28" height="28"><path d="M13 2 L4 14 L11 14 L9 22 L20 9 L13 9 Z" fill="url(#g-primary)"/></svg>WELD<span>PRO</span></a>
+      <div class="footer-links">
+        <a href="catalog.html">Каталог</a><a href="calculators.html">Калькуляторы</a><a href="wiki.html">База знаний</a><a href="account.html">Личный кабинет</a><a href="#download">Скачать</a>
+      </div>
+    </div>
+    <div class="footer-bottom">&copy; 2026 WELDPRO. Все права защищены.</div>
+  </footer>
+
+  <!-- Modal -->
+  <div class="modal-overlay" id="modalOverlay" onclick="if(event.target===this)closeModal()">
+    <div class="modal"><button class="modal-close" onclick="closeModal()">&#10005;</button><div id="modalBody"></div></div>
+  </div>
+
+  <button class="scroll-top" id="scrollTop" onclick="scrollToTop()"><svg viewBox="0 0 24 24"><path d="M12 19V5 M5 12l7-7 7 7" stroke="white" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+
+  <script src="js/app.js"></script>
+  <script>
+    // Register Service Worker for PWA
+    if ('serviceWorker' in navigator) {
+      if (document.readyState === 'complete') {
+        navigator.serviceWorker.register('./service-worker.js')
+          .then((reg) => {
+            console.log('[SW] Регистрация успешна:', reg.scope);
+          })
+          .catch((err) => {
+            console.error('[SW] Ошибка регистрации:', err);
+          });
+      } else {
+        window.addEventListener('load', () => {
+          navigator.serviceWorker.register('./service-worker.js')
+            .then((reg) => {
+              console.log('[SW] Регистрация успешна:', reg.scope);
+            })
+            .catch((err) => {
+              console.error('[SW] Ошибка регистрации:', err);
+            });
+        });
+      }
+    }
+
+    // FAQ data
+    const faq = [
+      { q: 'Какой аппарат выбрать для дома?', a: 'Для бытовых задач подойдут MMA-инверторы от 12 до 25 тыс. ₽ (Ресанта САИ 190, Кедр ИНВЕРТОР-200) или компактные MIG-полуавтоматы. Главное — ток от 160А и функция антизалипания.' },
+      { q: 'Чем TIG отличается от MIG?', a: 'TIG — сварка вольфрамовым электродом в аргоне, даёт самый чистый и точный шов, подходит для тонкого металла и алюминия. MIG/MAG — полуавтомат с подачей проволоки, быстрее и проще, но шов грубее.' },
+      { q: 'Какой газ нужен для сварки стали?', a: 'Для углеродистой стали в MIG/MAG используется смесь Ar/CO2 (обычно 80/20). Для TIG — чистый аргон. Для алюминия — только чистый аргон.' },
+      { q: 'Что такое ПВ (продолжительность включения)?', a: 'ПВ показывает, как долго аппарат может работать без перегрева. Например, ПВ 60% при 200А означает, что из 10 минут можно варить 6 минут на этом токе.' },
+      { q: 'Как устранить непровар?', a: 'Непровар возникает при недостаточном токе или высокой скорости сварки. Увеличьте ток, снизьте скорость и убедитесь, что кромки очищены. Для толстого металла используйте разделку кромок.' },
+      { q: 'Нужен ли подогрев при сварке толстого металла?', a: 'Да, при сварке металла толще 20 мм рекомендуется подогрев до 100-200°C для предотвращения трещин. Это особенно важно для низколегированных сталей.' }
+    ];
+    function renderFaq() {
+      document.getElementById('faqList').innerHTML = faq.map((f, i) => '<div class="faq-item"><div class="faq-question" onclick="toggleFaq(' + i + ')">' + f.q + '<span class="faq-toggle">+</span></div><div class="faq-answer"><p>' + f.a + '</p></div></div>').join('');
+    }
+    function toggleFaq(i) { document.querySelectorAll('.faq-item')[i].classList.toggle('open'); }
+    renderFaq();
+  </script>
+</body>
+</html>
